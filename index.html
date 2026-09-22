@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Inbox - Enterprise Ticketing Tool &amp; Issue Tracking</title>
+    <meta name="description" content="Inbox Infotech Pvt. Ltd. - Enterprise ticketing tool, issue tracking, sprint management, SLA escalation workflows, and team collaboration platform." />
+    <meta property="og:title" content="Inbox - Enterprise Ticketing Tool &amp; Issue Tracking" />
+    <meta property="og:description" content="Work organized. Teams aligned. Enterprise ticketing tool, sprint management, and L1/L2/L3 support escalation system." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function() {
+        try {
+          var settings = JSON.parse(localStorage.getItem('inbox_settings') || '{}');
+          var theme = settings.theme;
+          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased selection:bg-blue-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
