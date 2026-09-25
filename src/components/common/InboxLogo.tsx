@@ -15,7 +15,7 @@ export const InboxLogo: React.FC<InboxLogoProps> = ({
   showSubtitle = true,
   className = '',
   iconOnly = false,
-  tagText = 'Ticketing Tool',
+  tagText = 'Gold mine',
 }) => {
   const iconSizes = {
     xs: { width: 22, height: 22 },
@@ -110,7 +110,7 @@ export const InboxLogo: React.FC<InboxLogoProps> = ({
         />
       </svg>
 
-      {/* Typography: "Inbox" + "Ticketing Tool" Badge + Underline + "Infotech Pvt.Ltd." */}
+      {/* Typography: "Inbox" + "Gold mine" Badge + Underline + "Infotech Pvt.Ltd." */}
       {!iconOnly && showText && (
         <div className="flex flex-col justify-center leading-tight">
           <div className="flex items-center gap-1.5 flex-wrap">

@@ -1513,7 +1513,7 @@ export const AdminPanelPage: React.FC = () => {
         <ConfirmModal
           isOpen={true}
           title="Remove Member Account"
-          message={`Are you sure you want to permanently remove ${userToDelete.name} from Inbox Ticketing Tool?`}
+          message={`Are you sure you want to permanently remove ${userToDelete.name} from Inbox Gold mine?`}
           confirmLabel="Remove User"
           isDestructive={true}
           onConfirm={() => {
