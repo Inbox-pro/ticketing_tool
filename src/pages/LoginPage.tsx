@@ -24,7 +24,7 @@ export const LoginPage: React.FC = () => {
 
   // Selected account or custom email
   const [selectedUserId, setSelectedUserId] = useState<string>(users[0]?.id || 'user-1');
-  const [emailInput, setEmailInput] = useState<string>(users[0]?.email || 'tejas@inbox.Gold mine.io');
+  const [emailInput, setEmailInput] = useState<string>(users[0]?.email || 'tejas@inbox.enterprise.io');
   const [password, setPassword] = useState<string>('admin123');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-5xl mx-auto flex items-center justify-between py-2">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            Gold mine Portal
+            Enterprise Portal
           </span>
         </div>
         <button
@@ -116,7 +116,7 @@ export const LoginPage: React.FC = () => {
               <InboxLogo size="lg" />
             </div>
             <h1 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Gold mine Sign In
+              Enterprise Sign In
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-xs mx-auto">
               Authenticate with your staff credentials to access issues, SLA queues &amp; sprint boards.
@@ -137,7 +137,7 @@ export const LoginPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => handleQuickFill('tejas@inbox.Gold mine.io')}
+                  onClick={() => handleQuickFill('tejas@inbox.enterprise.io')}
                   className="flex items-center gap-2 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:border-blue-500 text-left transition"
                 >
                   <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-400 flex items-center justify-center text-[10px] font-bold">
@@ -151,7 +151,7 @@ export const LoginPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleQuickFill('rahul.s@inbox.Gold mine.io')}
+                  onClick={() => handleQuickFill('rahul.s@inbox.enterprise.io')}
                   className="flex items-center gap-2 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:border-blue-500 text-left transition"
                 >
                   <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-[10px] font-bold">
@@ -165,7 +165,7 @@ export const LoginPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleQuickFill('priya.p@inbox.Gold mine.io')}
+                  onClick={() => handleQuickFill('priya.p@inbox.enterprise.io')}
                   className="flex items-center gap-2 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:border-blue-500 text-left transition"
                 >
                   <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-400 flex items-center justify-center text-[10px] font-bold">
@@ -179,7 +179,7 @@ export const LoginPage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleQuickFill('amit.shah@inbox.Gold mine.io')}
+                  onClick={() => handleQuickFill('amit.shah@inbox.enterprise.io')}
                   className="flex items-center gap-2 p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-800/50 hover:border-blue-500 text-left transition"
                 >
                   <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400 flex items-center justify-center text-[10px] font-bold">
@@ -236,7 +236,7 @@ export const LoginPage: React.FC = () => {
                       setEmailInput(e.target.value);
                       setErrorMessage('');
                     }}
-                    placeholder="name@inbox.Gold mine.io"
+                    placeholder="name@inbox.enterprise.io"
                     className="w-full text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 pl-9 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
