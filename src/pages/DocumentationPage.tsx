@@ -75,7 +75,7 @@ export const DocumentationPage: React.FC = () => {
             </div>
 
             <p className="text-sm text-zinc-600 dark:text-zinc-300 max-w-2xl leading-relaxed">
-              <strong>Inbox</strong> is a unified enterprise issue tracking, agile sprint management, and multi-tier 
+              <strong>Inbox</strong> is a unified Gold_mine issue tracking, agile sprint management, and multi-tier 
               (L1/L2/L3) support escalation engine. It bridges customer operations, technical support, and core engineering 
               with automated SLA breach protection and live handoff audit trails.
             </p>
@@ -219,7 +219,7 @@ export const DocumentationPage: React.FC = () => {
                 The Three Support Tiers (L1, L2, L3) Explained
               </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                How tickets are distributed and escalated across tiers to meet enterprise SLAs.
+                How tickets are distributed and escalated across tiers to meet Gold_mine SLAs.
               </p>
             </div>
 
@@ -602,16 +602,16 @@ export const DocumentationPage: React.FC = () => {
                 </p>
                 <div className="pt-1 flex flex-wrap gap-2 text-[11px] font-mono">
                   <span className="px-2 py-0.5 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
-                    Admin: tejas@inbox.enterprise.io (admin123)
+                    Admin: tejas@inbox.Gold_mine.io (admin123)
                   </span>
                   <span className="px-2 py-0.5 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
-                    Support L1: rahul.s@inbox.enterprise.io (support123)
+                    Support L1: rahul.s@inbox.Gold_mine.io (support123)
                   </span>
                   <span className="px-2 py-0.5 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
-                    Tech L2: priya.p@inbox.enterprise.io (tech123)
+                    Tech L2: priya.p@inbox.Gold_mine.io (tech123)
                   </span>
                   <span className="px-2 py-0.5 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">
-                    Engineer L3: amit.shah@inbox.enterprise.io (engineer123)
+                    Engineer L3: amit.shah@inbox.Gold_mine.io (engineer123)
                   </span>
                 </div>
               </div>
