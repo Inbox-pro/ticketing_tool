@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-5xl mx-auto flex items-center justify-between py-2">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-            GoldMine Portal
+            Gold Mine Portal
           </span>
         </div>
         <button
@@ -116,7 +116,7 @@ export const LoginPage: React.FC = () => {
               <InboxLogo size="lg" />
             </div>
             <h1 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              GoldMine Sign In
+              Gold Mine Sign In
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-xs mx-auto">
               Authenticate with your staff credentials to access issues, SLA queues &amp; sprint boards.
