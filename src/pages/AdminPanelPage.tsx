@@ -127,7 +127,7 @@ export const AdminPanelPage: React.FC = () => {
     updateSettings({
       rolePageAccess: rolePermissions,
     });
-    addToast('Permissions Saved', 'Gold_mine Role-Based Access Control matrix successfully updated.', 'success');
+    addToast('Permissions Saved', 'GoldMine Role-Based Access Control matrix successfully updated.', 'success');
   };
 
   const handleResetRolePermissions = () => {
@@ -617,7 +617,7 @@ export const AdminPanelPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-2xl">
-                Configure which Gold_mine roles are permitted to access each application view. When a page is revoked for a role, users with that role will see the Access Denied guard and sidebar indicators will reflect restricted access.
+                Configure which GoldMine roles are permitted to access each application view. When a page is revoked for a role, users with that role will see the Access Denied guard and sidebar indicators will reflect restricted access.
               </p>
             </div>
 
@@ -626,7 +626,7 @@ export const AdminPanelPage: React.FC = () => {
                 type="button"
                 onClick={handleResetRolePermissions}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-medium transition"
-                title="Restore default Gold_mine permissions"
+                title="Restore default GoldMine permissions"
               >
                 <RefreshCw size={13} />
                 <span>Restore Defaults</span>
@@ -1412,7 +1412,7 @@ export const AdminPanelPage: React.FC = () => {
                   type="email"
                   value={userEmail}
                   onChange={e => setUserEmail(e.target.value)}
-                  placeholder="anand@inbox.Gold_mine.io"
+                  placeholder="anand@inbox.GoldMine.io"
                   className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   required
                 />

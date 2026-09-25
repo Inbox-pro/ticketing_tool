@@ -181,7 +181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return found || users[0] || {
       id: 'user-1',
       name: 'Tejas Chauhan',
-      email: 'tejas@inbox.Gold_mine.io',
+      email: 'tejas@inbox.GoldMine.io',
       role: 'Admin',
       department: 'Engineering',
       supportLevels: ['L1', 'L2', 'L3'],

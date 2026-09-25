@@ -4,7 +4,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-1',
     name: 'Tejas Chauhan',
-    email: 'tejas@inbox.Gold_mine.io',
+    email: 'tejas@inbox.GoldMine.io',
     password: 'admin123',
     role: 'Admin',
     department: 'Engineering & Operations',
@@ -16,7 +16,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-2',
     name: 'Rahul Sharma',
-    email: 'rahul.s@inbox.Gold_mine.io',
+    email: 'rahul.s@inbox.GoldMine.io',
     password: 'support123',
     role: 'Support Agent',
     department: 'Customer Support',
@@ -28,7 +28,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-3',
     name: 'Priya Patel',
-    email: 'priya.p@inbox.Gold_mine.io',
+    email: 'priya.p@inbox.GoldMine.io',
     password: 'tech123',
     role: 'Technical',
     department: 'Technical Operations',
@@ -40,7 +40,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-4',
     name: 'Amit Shah',
-    email: 'amit.shah@inbox.Gold_mine.io',
+    email: 'amit.shah@inbox.GoldMine.io',
     password: 'engineer123',
     role: 'Engineer',
     department: 'Core Platform Engineering',
@@ -52,7 +52,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-5',
     name: 'Neha Mehta',
-    email: 'neha.m@inbox.Gold_mine.io',
+    email: 'neha.m@inbox.GoldMine.io',
     password: 'support123',
     role: 'Support Agent',
     department: 'Customer Support',
@@ -64,7 +64,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-6',
     name: 'Vivek Joshi',
-    email: 'vivek.j@inbox.Gold_mine.io',
+    email: 'vivek.j@inbox.GoldMine.io',
     password: 'engineer123',
     role: 'Engineer',
     department: 'Backend Infrastructure',
@@ -76,7 +76,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-7',
     name: 'Ananya Roy',
-    email: 'ananya.r@inbox.Gold_mine.io',
+    email: 'ananya.r@inbox.GoldMine.io',
     password: 'qa123',
     role: 'QA',
     department: 'Quality Assurance',
@@ -88,7 +88,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-8',
     name: 'Vikram Rao',
-    email: 'vikram.r@inbox.Gold_mine.io',
+    email: 'vikram.r@inbox.GoldMine.io',
     password: 'pm123',
     role: 'Project Manager',
     department: 'Product Delivery',
@@ -104,7 +104,7 @@ export const INITIAL_PROJECTS: Project[] = [
     id: 'proj-1',
     key: 'INB',
     name: 'Inbox CRM',
-    description: 'Gold_mine customer relationship management, contact synchronization, and pipeline workflows.',
+    description: 'GoldMine customer relationship management, contact synchronization, and pipeline workflows.',
     leadId: 'user-1',
     memberIds: ['user-1', 'user-2', 'user-3', 'user-4', 'user-7', 'user-8'],
     status: 'Active',
@@ -1063,7 +1063,7 @@ export const INITIAL_ISSUES: Issue[] = [
   {
     id: 'CSP-1005',
     title: 'Customer survey NPS feedback webhook integration',
-    description: 'Post webhook events to Gold_mine Slack channel when customer submits negative score (<6).',
+    description: 'Post webhook events to GoldMine Slack channel when customer submits negative score (<6).',
     type: 'Story',
     status: 'To Do',
     priority: 'Medium',

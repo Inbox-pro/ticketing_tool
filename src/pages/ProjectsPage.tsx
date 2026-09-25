@@ -93,7 +93,7 @@ export const ProjectsPage: React.FC = () => {
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Manage Gold_mine repositories, service desks, and cross-functional teams.
+            Manage GoldMine repositories, service desks, and cross-functional teams.
           </p>
         </div>
 

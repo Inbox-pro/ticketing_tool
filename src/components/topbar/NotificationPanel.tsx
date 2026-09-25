@@ -116,7 +116,7 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       </div>
 
       <div className="px-4 py-2 bg-zinc-50 dark:bg-zinc-950/60 border-t border-zinc-100 dark:border-zinc-800 text-center">
-        <span className="text-[11px] text-zinc-400">Gold_mine support routing active</span>
+        <span className="text-[11px] text-zinc-400">GoldMine support routing active</span>
       </div>
     </div>
   );
