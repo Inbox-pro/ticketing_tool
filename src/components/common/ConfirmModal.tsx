@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   isOpen: boolean;
@@ -16,13 +17,17 @@ export const ConfirmModal: React.FC<Props> = ({
   isOpen,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   isDestructive = true,
   onConfirm,
   onCancel,
 }) => {
+  const { t } = useApp();
   if (!isOpen) return null;
+
+  const actualConfirm = confirmLabel || t('common.confirm');
+  const actualCancel = cancelLabel || t('common.cancel');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
@@ -36,6 +41,7 @@ export const ConfirmModal: React.FC<Props> = ({
             <button
               onClick={onCancel}
               className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-md transition"
+              aria-label={t('common.close')}
             >
               <X size={16} />
             </button>
@@ -48,7 +54,7 @@ export const ConfirmModal: React.FC<Props> = ({
             onClick={onCancel}
             className="px-3.5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-md transition"
           >
-            {cancelLabel}
+            {actualCancel}
           </button>
           <button
             type="button"
@@ -59,7 +65,7 @@ export const ConfirmModal: React.FC<Props> = ({
                 : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
-            {confirmLabel}
+            {actualConfirm}
           </button>
         </div>
       </div>

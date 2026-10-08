@@ -5,7 +5,7 @@ import { ChevronDown, User, Settings as SettingsIcon, RotateCcw, Shield, LogOut 
 import { SupportBadge } from '../common/SupportBadge';
 
 export const UserSwitcher: React.FC = () => {
-  const { users, currentUser, switchUser, resetAllData, logout } = useApp();
+  const { users, currentUser, switchUser, resetAllData, logout, t, formatRole } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -26,8 +26,8 @@ export const UserSwitcher: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(prev => !prev)}
-        className="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-left"
-        title="Switch active user / view profile"
+        className="flex items-center gap-2 p-1 sm:p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-left"
+        title={t('auth.demoAccounts')}
       >
         <img
           src={currentUser.avatar}
@@ -40,7 +40,7 @@ export const UserSwitcher: React.FC = () => {
             {currentUser.name}
           </div>
           <div className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">
-            {currentUser.role}
+            {formatRole(currentUser.role)}
           </div>
         </div>
         <ChevronDown size={14} className="text-zinc-400 shrink-0" />
@@ -69,7 +69,7 @@ export const UserSwitcher: React.FC = () => {
                     <SupportBadge key={lvl} level={lvl} size="sm" showLabel={false} />
                   ))}
                   <span className="text-[10px] text-zinc-400 font-mono px-1 bg-zinc-200 dark:bg-zinc-800 rounded">
-                    {currentUser.role}
+                    {formatRole(currentUser.role)}
                   </span>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export const UserSwitcher: React.FC = () => {
           {/* Switch Demo Role Section */}
           <div className="p-2 border-b border-zinc-100 dark:border-zinc-800">
             <div className="px-2 py-1 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
-              Switch Active User (Demo)
+              {t('auth.demoAccounts')}
             </div>
             <div className="max-h-48 overflow-y-auto space-y-0.5 mt-1">
               {users.map(u => (
@@ -105,7 +105,7 @@ export const UserSwitcher: React.FC = () => {
                     <span className="truncate">{u.name}</span>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <span className="text-[10px] text-zinc-400 font-mono">{u.supportLevels.join('/')}</span>
+                    <span className="text-[10px] text-zinc-400 font-mono">{formatRole(u.role)}</span>
                   </div>
                 </button>
               ))}
@@ -122,7 +122,7 @@ export const UserSwitcher: React.FC = () => {
               className="w-full text-left px-2.5 py-1.5 rounded-md text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2"
             >
               <User size={14} className="text-zinc-400" />
-              <span>My Profile &amp; Stats</span>
+              <span>{t('profile.title')}</span>
             </button>
             <button
               onClick={() => {
@@ -132,7 +132,7 @@ export const UserSwitcher: React.FC = () => {
               className="w-full text-left px-2.5 py-1.5 rounded-md text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 flex items-center gap-2 font-medium"
             >
               <Shield size={14} className="text-blue-500" />
-              <span>Admin Panel &amp; Governance</span>
+              <span>{t('admin.title')}</span>
             </button>
             <button
               onClick={() => {
@@ -142,7 +142,7 @@ export const UserSwitcher: React.FC = () => {
               className="w-full text-left px-2.5 py-1.5 rounded-md text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center gap-2"
             >
               <SettingsIcon size={14} className="text-zinc-400" />
-              <span>System Settings &amp; SLA Rules</span>
+              <span>{t('settings.title')}</span>
             </button>
             <button
               onClick={() => {
@@ -153,11 +153,11 @@ export const UserSwitcher: React.FC = () => {
               className="w-full text-left px-2.5 py-1.5 rounded-md text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 flex items-center gap-2"
             >
               <LogOut size={14} className="text-amber-500" />
-              <span>Sign Out Session</span>
+              <span>{t('nav.logout')}</span>
             </button>
             <button
               onClick={() => {
-                if (window.confirm('Reset all issues, sprints, and team members to factory seed state?')) {
+                if (window.confirm(t('settings.resetConfirmDesc'))) {
                   resetAllData();
                   setIsOpen(false);
                 }
@@ -165,7 +165,7 @@ export const UserSwitcher: React.FC = () => {
               className="w-full text-left px-2.5 py-1.5 rounded-md text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-2"
             >
               <RotateCcw size={14} className="text-rose-500" />
-              <span>Reset Data to Default</span>
+              <span>{t('settings.resetSeed')}</span>
             </button>
           </div>
         </div>

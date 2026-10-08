@@ -30,7 +30,7 @@ const COLUMNS: { id: IssueStatus; title: string; color: string }[] = [
 ];
 
 export const KanbanBoard: React.FC = () => {
-  const { issues, projects, users, sprints, currentUser, updateIssue } = useApp();
+  const { issues, projects, users, sprints, currentUser, updateIssue, t, formatStatus } = useApp();
   const navigate = useNavigate();
 
   // Filter state
@@ -101,14 +101,14 @@ export const KanbanBoard: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Kanban Board
+              {t('board.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">
-              {filteredIssues.length} tickets
+              {t('board.totalIssues', { count: filteredIssues.length })}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Drag and drop tickets between development and support workflow states.
+            {t('board.subtitle')}
           </p>
         </div>
 
@@ -120,7 +120,7 @@ export const KanbanBoard: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
         >
           <Plus size={15} className="stroke-[2.5]" />
-          <span>Create Issue</span>
+          <span>{t('nav.createIssue')}</span>
         </button>
       </div>
 
@@ -134,7 +134,7 @@ export const KanbanBoard: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Filter board tickets..."
+              placeholder={t('board.filterPlaceholder')}
               className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
             />
           </div>
@@ -145,7 +145,7 @@ export const KanbanBoard: React.FC = () => {
             onChange={e => setSelectedProjectId(e.target.value)}
             className="text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2.5 py-1.5 focus:outline-none"
           >
-            <option value="ALL">All Projects</option>
+            <option value="ALL">{t('board.allProjects')}</option>
             {projects.map(p => (
               <option key={p.id} value={p.id}>{p.name} ({p.key})</option>
             ))}
@@ -157,8 +157,8 @@ export const KanbanBoard: React.FC = () => {
             onChange={e => setSelectedSprintId(e.target.value)}
             className="text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2.5 py-1.5 focus:outline-none"
           >
-            <option value="ALL">All Sprints</option>
-            <option value="BACKLOG">Backlog Only</option>
+            <option value="ALL">{t('board.allSprints')}</option>
+            <option value="BACKLOG">{t('board.backlogOnly')}</option>
             {projectSprints.map(s => (
               <option key={s.id} value={s.id}>{s.name} ({s.status})</option>
             ))}
@@ -170,10 +170,10 @@ export const KanbanBoard: React.FC = () => {
             onChange={e => setSelectedSupportLevel(e.target.value)}
             className="text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2.5 py-1.5 focus:outline-none"
           >
-            <option value="ALL">All Support Tiers</option>
-            <option value="L1">L1 - Frontline</option>
-            <option value="L2">L2 - Technical</option>
-            <option value="L3">L3 - Engineering</option>
+            <option value="ALL">{t('board.allTiers')}</option>
+            <option value="L1">{t('board.l1Frontline')}</option>
+            <option value="L2">{t('board.l2Technical')}</option>
+            <option value="L3">{t('board.l3Engineering')}</option>
           </select>
 
           {/* Assignee */}
@@ -182,8 +182,8 @@ export const KanbanBoard: React.FC = () => {
             onChange={e => setSelectedAssignee(e.target.value)}
             className="text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2.5 py-1.5 focus:outline-none"
           >
-            <option value="ALL">All Members</option>
-            <option value="ME">Assigned to Me</option>
+            <option value="ALL">{t('board.allMembers')}</option>
+            <option value="ME">{t('nav.myIssues')}</option>
             {users.map(u => (
               <option key={u.id} value={u.id}>{u.name}</option>
             ))}
@@ -200,7 +200,7 @@ export const KanbanBoard: React.FC = () => {
           }}
           className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
         >
-          Reset Filters
+          {t('board.resetFilters')}
         </button>
       </div>
 
@@ -227,7 +227,7 @@ export const KanbanBoard: React.FC = () => {
                 <div className={`pb-2.5 mb-3 border-b-2 ${col.color} flex items-center justify-between`}>
                   <div className="flex items-center gap-1.5">
                     <h2 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
-                      {col.title}
+                      {formatStatus(col.id)}
                     </h2>
                     <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold">
                       {colIssues.length}
@@ -331,7 +331,7 @@ export const KanbanBoard: React.FC = () => {
                 className="mt-3 w-full py-1.5 rounded-lg border border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 hover:border-zinc-400 text-xs font-medium flex items-center justify-center gap-1 transition"
               >
                 <Plus size={13} />
-                <span>Add Card</span>
+                <span>{t('board.addCard')}</span>
               </button>
             </div>
           );

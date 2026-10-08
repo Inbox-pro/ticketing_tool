@@ -32,11 +32,10 @@ interface Props {
 }
 
 export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
-  const { issues, projects, currentUser, settings, logout } = useApp();
+  const { issues, projects, currentUser, settings, logout, t, formatRole } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
   const [supportQueuesOpen, setSupportQueuesOpen] = useState(true);
-  const [projectsListOpen, setProjectsListOpen] = useState(true);
   const [filterPermittedOnly, setFilterPermittedOnly] = useState(false);
 
   const canAccess = (pageId: AppPageId) => {
@@ -77,9 +76,9 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
         {/* Current Role Badge & Permitted Filter */}
         <div className="px-2 py-1.5 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">Role:</span>
+            <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-medium">{t('nav.role')}:</span>
             <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 truncate">
-              {currentUser.role}
+              {formatRole(currentUser.role)}
             </span>
           </div>
           <button
@@ -92,21 +91,21 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
             }`}
             title="Toggle: Show only pages permitted for your role"
           >
-            {filterPermittedOnly ? 'Permitted Only' : 'All Views'}
+            {filterPermittedOnly ? t('nav.permittedOnly') : t('nav.allViews')}
           </button>
         </div>
 
         {/* Primary Views */}
         <div>
           <div className="px-2 pb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Workspace</span>
+            <span>{t('nav.primaryViews')}</span>
           </div>
           <nav className="space-y-0.5">
             {(!filterPermittedOnly || canAccess('dashboard')) && (
               <NavLink to="/" end className={getNavLinkClass('dashboard')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <LayoutDashboard size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Dashboard</span>
+                  <span>{t('nav.dashboard')}</span>
                 </div>
                 {!canAccess('dashboard') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -120,7 +119,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/issues" className={getNavLinkClass('issues')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <Ticket size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Issues &amp; Tickets</span>
+                  <span>{t('nav.issues')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {!canAccess('issues') && (
@@ -139,7 +138,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/board" className={getNavLinkClass('board')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <KanbanSquare size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Kanban Board</span>
+                  <span>{t('nav.board')}</span>
                 </div>
                 {!canAccess('board') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -153,7 +152,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/backlog" className={getNavLinkClass('backlog')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <ListOrdered size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Backlog &amp; Sprints</span>
+                  <span>{t('nav.backlog')}</span>
                 </div>
                 {!canAccess('backlog') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -167,7 +166,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/epics" className={getNavLinkClass('backlog')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <Zap size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Epics &amp; Roadmap</span>
+                  <span>{t('nav.epics')}</span>
                 </div>
                 {!canAccess('backlog') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -181,7 +180,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/projects" className={getNavLinkClass('projects')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <Layers size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Projects</span>
+                  <span>{t('nav.projects')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {!canAccess('projects') && (
@@ -206,7 +205,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               className="w-full flex items-center justify-between px-2 pb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider hover:text-zinc-600 dark:hover:text-zinc-300 transition"
             >
               <div className="flex items-center gap-1.5">
-                <span>Support Queues</span>
+                <span>{t('nav.supportQueues')}</span>
                 {!canAccess('support') && <Lock size={10} className="text-zinc-400" />}
               </div>
               {supportQueuesOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
@@ -217,7 +216,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/support" end className={getNavLinkClass('support')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <ShieldAlert size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                    <span>Support Center</span>
+                    <span>{t('nav.support')}</span>
                   </div>
                   {!canAccess('support') && (
                     <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -229,7 +228,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/support?level=L1" className={getNavLinkClass('support')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-sky-500" />
-                    <span>L1 Frontline Queue</span>
+                    <span>{t('nav.l1Queue')}</span>
                   </div>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 rounded font-semibold">
                     {l1Count}
@@ -239,7 +238,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/support?level=L2" className={getNavLinkClass('support')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>L2 Technical Queue</span>
+                    <span>{t('nav.l2Queue')}</span>
                   </div>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 rounded font-semibold">
                     {l2Count}
@@ -249,7 +248,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/support?level=L3" className={getNavLinkClass('support')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-purple-500" />
-                    <span>L3 Engineering Queue</span>
+                    <span>{t('nav.l3Queue')}</span>
                   </div>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 rounded font-semibold">
                     {l3Count}
@@ -259,7 +258,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/support?filter=escalated" className={getNavLinkClass('support')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <AlertTriangle size={15} className="text-amber-500" />
-                    <span>Escalated Issues</span>
+                    <span>{t('nav.escalatedQueue')}</span>
                   </div>
                   {escalatedCount > 0 && (
                     <span className="text-[10px] font-mono px-1.5 py-0.2 bg-amber-500 text-white rounded font-semibold">
@@ -271,7 +270,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <NavLink to="/issues?assignee=me" className={getNavLinkClass('issues')} onClick={onMobileClose}>
                   <div className="flex items-center gap-2.5">
                     <Clock size={15} className="text-blue-500" />
-                    <span>Assigned to Me</span>
+                    <span>{t('nav.myIssues')}</span>
                   </div>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded font-semibold">
                     {myIssuesCount}
@@ -285,14 +284,14 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
         {/* Management & Analytics */}
         <div>
           <div className="px-2 pb-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">
-            Insights &amp; Governance
+            {t('nav.systemConfig')}
           </div>
           <nav className="space-y-0.5">
             {(!filterPermittedOnly || canAccess('reports')) && (
               <NavLink to="/reports" className={getNavLinkClass('reports')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <BarChart3 size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Reports &amp; SLA</span>
+                  <span>{t('nav.reports')}</span>
                 </div>
                 {!canAccess('reports') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -306,7 +305,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/team" className={getNavLinkClass('team')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <Users2 size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Team &amp; Roles</span>
+                  <span>{t('nav.team')}</span>
                 </div>
                 {!canAccess('team') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -321,17 +320,13 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <div className="flex items-center gap-2.5">
                   <Shield size={16} className={canAccess('admin') ? "text-blue-500 group-hover:text-blue-600" : "text-zinc-400"} />
                   <span className={canAccess('admin') ? "font-semibold text-blue-600 dark:text-blue-400" : ""}>
-                    Admin Panel
+                    {t('nav.admin')}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  {!canAccess('admin') ? (
+                  {!canAccess('admin') && (
                     <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
                       <Lock size={10} />
-                    </span>
-                  ) : (
-                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 rounded uppercase">
-                      Auth
                     </span>
                   )}
                 </div>
@@ -342,7 +337,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               <NavLink to="/settings" className={getNavLinkClass('settings')} onClick={onMobileClose}>
                 <div className="flex items-center gap-2.5">
                   <SettingsIcon size={16} className="text-zinc-400 group-hover:text-blue-600" />
-                  <span>Settings &amp; SLA Rules</span>
+                  <span>{t('nav.settings')}</span>
                 </div>
                 {!canAccess('settings') && (
                   <span className="flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
@@ -357,10 +352,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
                 <div className="flex items-center gap-2.5">
                   <BookOpen size={16} className="text-zinc-400 group-hover:text-blue-600" />
                   <span className="flex items-center gap-1.5">
-                    <span>Documentation</span>
-                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 rounded">
-                      Guide
-                    </span>
+                    <span>{t('nav.docs')}</span>
                   </span>
                 </div>
                 {!canAccess('docs') && (
@@ -390,7 +382,7 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400">
-                  {currentUser.role}
+                  {formatRole(currentUser.role)}
                 </span>
                 <span className="text-zinc-300 dark:text-zinc-700">•</span>
                 <span className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400">
@@ -406,7 +398,8 @@ export const Sidebar: React.FC<Props> = ({ isMobileOpen, onMobileClose }) => {
               navigate('/login');
             }}
             className="p-1.5 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400 transition"
-            title="Sign Out Session"
+            title={t('nav.logout')}
+            aria-label={t('nav.logout')}
           >
             <LogOut size={14} />
           </button>

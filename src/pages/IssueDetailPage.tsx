@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { 
@@ -9,21 +9,15 @@ import {
   Check, 
   X, 
   Paperclip, 
-  MessageSquare, 
   Lock, 
   Globe, 
-  Clock, 
-  Calendar, 
   UploadCloud, 
   Download, 
   FileText, 
   AlertTriangle,
   Send,
-  MoreHorizontal,
   History,
-  ShieldAlert,
-  Sparkles,
-  User as UserIcon
+  ShieldAlert
 } from 'lucide-react';
 import { SupportBadge } from '../components/common/SupportBadge';
 import { PriorityBadge } from '../components/common/PriorityBadge';
@@ -31,7 +25,7 @@ import { StatusBadge } from '../components/common/StatusBadge';
 import { TypeBadge } from '../components/common/TypeBadge';
 import { SLABadge } from '../components/common/SLABadge';
 import { calculateSLAInfo } from '../services/storage';
-import { Priority, IssueStatus, SupportLevel, IssueType } from '../types';
+import { Priority, IssueStatus } from '../types';
 import { EscalateModal } from '../components/issue/EscalateModal';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 
@@ -51,12 +45,15 @@ export const IssueDetailPage: React.FC = () => {
     currentUser, 
     updateIssue, 
     deleteIssue, 
-    addComment,
-    editComment,
-    deleteComment,
-    addAttachment,
-    deleteAttachment,
-    addToast
+    addComment, 
+    deleteComment, 
+    addAttachment, 
+    deleteAttachment, 
+    addToast,
+    t,
+    formatStatus,
+    formatPriority,
+    formatRole
   } = useApp();
 
   // Find issue
@@ -72,8 +69,6 @@ export const IssueDetailPage: React.FC = () => {
   const [commentText, setCommentText] = useState('');
   const [commentType, setCommentType] = useState<'public' | 'internal'>('public');
   const [activeTab, setActiveTab] = useState<'comments' | 'internal' | 'history'>('comments');
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editingCommentText, setEditingCommentText] = useState('');
 
   // New Label input
   const [newLabel, setNewLabel] = useState('');
@@ -97,13 +92,12 @@ export const IssueDetailPage: React.FC = () => {
     return (
       <div className="p-12 text-center rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
         <AlertTriangle size={32} className="mx-auto text-amber-500 mb-3" />
-        <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">Issue Not Found</h2>
-        <p className="text-xs text-zinc-500 mt-1">Ticket {id} does not exist or may have been deleted.</p>
+        <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{t('common.noResults')}</h2>
         <button
           onClick={() => navigate('/issues')}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition"
         >
-          Back to Issues
+          {t('issueDetail.backToIssues')}
         </button>
       </div>
     );
@@ -202,11 +196,11 @@ export const IssueDetailPage: React.FC = () => {
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <Link to="/issues" className="hover:text-blue-600 flex items-center gap-1">
             <ArrowLeft size={14} />
-            <span>Issues</span>
+            <span>{t('nav.issues')}</span>
           </Link>
           <span>/</span>
           <Link to={`/projects/${project?.id}`} className="hover:text-blue-600 font-medium">
-            {project?.name || 'Project'}
+            {project?.name || t('common.project')}
           </Link>
           <span>/</span>
           <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">{issue.id}</span>
@@ -221,14 +215,15 @@ export const IssueDetailPage: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800 hover:bg-amber-200 dark:hover:bg-amber-900 transition shadow-xs"
             >
               <ArrowUpRight size={14} className="stroke-[2.5]" />
-              <span>Escalate Ticket</span>
+              <span>{t('issueDetail.escalateIssue')}</span>
             </button>
           )}
 
           <button
             onClick={() => setIsDeleteOpen(true)}
             className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition"
-            title="Delete Ticket"
+            title={t('issueDetail.deleteIssue')}
+            aria-label={t('issueDetail.deleteIssue')}
           >
             <Trash2 size={16} />
           </button>
@@ -246,7 +241,7 @@ export const IssueDetailPage: React.FC = () => {
               <SupportBadge level={issue.supportLevel} />
               {issue.isEscalated && (
                 <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
-                  Escalated
+                  {t('issues.escalatedTag')}
                 </span>
               )}
             </div>
@@ -258,7 +253,7 @@ export const IssueDetailPage: React.FC = () => {
                   type="text"
                   value={titleValue}
                   onChange={e => setTitleValue(e.target.value)}
-                  className="w-full text-base sm:text-lg font-bold rounded-md border border-blue-500 bg-zinc-50 dark:bg-zinc-800 px-3 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  className="w-full text-base sm:text-lg font-bold rounded-md border border-blue-500 bg-zinc-50 dark:bg-zinc-800 px-3 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                   autoFocus
                 />
                 <div className="flex items-center gap-2">
@@ -266,7 +261,7 @@ export const IssueDetailPage: React.FC = () => {
                     onClick={handleSaveTitle}
                     className="inline-flex items-center gap-1 px-3 py-1 bg-blue-600 text-white rounded text-xs font-semibold"
                   >
-                    <Check size={13} /> Save
+                    <Check size={13} /> {t('common.save')}
                   </button>
                   <button
                     onClick={() => {
@@ -275,7 +270,7 @@ export const IssueDetailPage: React.FC = () => {
                     }}
                     className="px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </div>
@@ -287,7 +282,8 @@ export const IssueDetailPage: React.FC = () => {
                 <button
                   onClick={() => setIsEditingTitle(true)}
                   className="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-blue-600 p-1 transition shrink-0"
-                  title="Edit title"
+                  title={t('issueDetail.editIssue')}
+                  aria-label={t('issueDetail.editIssue')}
                 >
                   <Edit3 size={14} />
                 </button>
@@ -297,35 +293,35 @@ export const IssueDetailPage: React.FC = () => {
             {/* Inline Quick Status & Priority change */}
             <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center gap-4 flex-wrap text-xs">
               <div className="flex items-center gap-2">
-                <span className="text-zinc-400 font-medium">Status:</span>
+                <span className="text-zinc-400 font-medium">{t('common.status')}:</span>
                 <select
                   value={issue.status}
                   onChange={e => updateIssue(issue.id, { status: e.target.value as IssueStatus })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                 >
-                  <option value="Open">Open</option>
-                  <option value="To Do">To Do</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="In Review">In Review</option>
-                  <option value="Testing">Testing</option>
-                  <option value="Blocked">Blocked</option>
-                  <option value="Resolved">Resolved</option>
-                  <option value="Closed">Closed</option>
+                  <option value="Open">{formatStatus('Open')}</option>
+                  <option value="To Do">{formatStatus('To Do')}</option>
+                  <option value="In Progress">{formatStatus('In Progress')}</option>
+                  <option value="In Review">{formatStatus('In Review')}</option>
+                  <option value="Testing">{formatStatus('Testing')}</option>
+                  <option value="Blocked">{formatStatus('Blocked')}</option>
+                  <option value="Resolved">{formatStatus('Resolved')}</option>
+                  <option value="Closed">{formatStatus('Closed')}</option>
                 </select>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-zinc-400 font-medium">Priority:</span>
+                <span className="text-zinc-400 font-medium">{t('common.priority')}:</span>
                 <select
                   value={issue.priority}
                   onChange={e => updateIssue(issue.id, { priority: e.target.value as Priority })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2.5 py-1 text-xs font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                 >
-                  <option value="Highest">Highest (P0)</option>
-                  <option value="High">High (P1)</option>
-                  <option value="Medium">Medium (P2)</option>
-                  <option value="Low">Low (P3)</option>
-                  <option value="Lowest">Lowest (P4)</option>
+                  <option value="Highest">{formatPriority('Highest')}</option>
+                  <option value="High">{formatPriority('High')}</option>
+                  <option value="Medium">{formatPriority('Medium')}</option>
+                  <option value="Low">{formatPriority('Low')}</option>
+                  <option value="Lowest">{formatPriority('Lowest')}</option>
                 </select>
               </div>
             </div>
@@ -335,7 +331,7 @@ export const IssueDetailPage: React.FC = () => {
           <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
-                Description
+                {t('issueDetail.descriptionSection')}
               </h2>
               {!isEditingDesc && (
                 <button
@@ -343,7 +339,7 @@ export const IssueDetailPage: React.FC = () => {
                   className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1"
                 >
                   <Edit3 size={12} />
-                  <span>Edit</span>
+                  <span>{t('common.edit')}</span>
                 </button>
               )}
             </div>
@@ -354,14 +350,14 @@ export const IssueDetailPage: React.FC = () => {
                   rows={6}
                   value={descValue}
                   onChange={e => setDescValue(e.target.value)}
-                  className="w-full text-xs rounded-md border border-blue-500 bg-zinc-50 dark:bg-zinc-800 p-3 text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  className="w-full text-xs rounded-md border border-blue-500 bg-zinc-50 dark:bg-zinc-800 p-3 text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                 />
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleSaveDesc}
                     className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-blue-600 text-white rounded text-xs font-semibold"
                   >
-                    <Check size={13} /> Save Description
+                    <Check size={13} /> {t('common.save')}
                   </button>
                   <button
                     onClick={() => {
@@ -370,29 +366,26 @@ export const IssueDetailPage: React.FC = () => {
                     }}
                     className="px-3.5 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                 </div>
               </div>
             ) : (
               <div className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed">
-                {issue.description || <span className="italic text-zinc-400">No description provided for this issue.</span>}
+                {issue.description || <span className="italic text-zinc-400">{t('issueDetail.noDescription')}</span>}
               </div>
             )}
           </div>
 
-          {/* Escalation History Timeline (Crucial L1/L2/L3 feature) */}
+          {/* Escalation History Timeline */}
           {issue.escalationHistory && issue.escalationHistory.length > 0 && (
             <div className="p-5 rounded-xl bg-amber-50/40 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/60 shadow-xs">
               <div className="flex items-center gap-2 mb-4">
                 <ShieldAlert size={18} className="text-amber-600 dark:text-amber-400" />
                 <div>
                   <h2 className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
-                    Escalation History ({issue.escalationHistory.length})
+                    {t('issueDetail.escalationHistorySection')} ({issue.escalationHistory.length})
                   </h2>
-                  <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80">
-                    Audit log of all support tier handoffs and technical escalation reasons
-                  </p>
                 </div>
               </div>
 
@@ -412,7 +405,7 @@ export const IssueDetailPage: React.FC = () => {
                           <span className="text-zinc-400 font-bold">→</span>
                           <SupportBadge level={rec.toLevel} size="sm" />
                           <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                            by {escalatedBy?.name || 'Support Agent'}
+                            {t('issueDetail.escalatedBy', { name: escalatedBy?.name || 'Agent' })}
                           </span>
                         </div>
                         <span className="text-[10px] text-zinc-400 font-mono">
@@ -426,9 +419,9 @@ export const IssueDetailPage: React.FC = () => {
 
                       {assignedTo && (
                         <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5 pt-0.5">
-                          <span>Reassigned to:</span>
+                          <span>{t('common.assignee')}:</span>
                           <span className="font-semibold text-zinc-800 dark:text-zinc-200">{assignedTo.name}</span>
-                          <span className="text-[10px] text-zinc-400">({assignedTo.role})</span>
+                          <span className="text-[10px] text-zinc-400">({formatRole(assignedTo.role)})</span>
                         </div>
                       )}
                     </div>
@@ -444,7 +437,7 @@ export const IssueDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Paperclip size={16} className="text-zinc-400" />
                 <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
-                  Attachments ({(issue.attachments || []).length})
+                  {t('issueDetail.attachmentsSection')} ({(issue.attachments || []).length})
                 </h2>
               </div>
               <button
@@ -452,7 +445,7 @@ export const IssueDetailPage: React.FC = () => {
                 className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1"
               >
                 <UploadCloud size={13} />
-                <span>Upload File</span>
+                <span>{t('common.upload')}</span>
               </button>
               <input
                 ref={fileInputRef}
@@ -480,10 +473,7 @@ export const IssueDetailPage: React.FC = () => {
             >
               <UploadCloud size={24} className="mx-auto text-zinc-400 mb-2" />
               <p className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">
-                Drag and drop files here, or <span className="text-blue-600 underline">browse</span>
-              </p>
-              <p className="text-[10px] text-zinc-400 mt-1">
-                Attach logs, error screenshots, HAR files, or specification documents
+                {t('common.upload')}
               </p>
             </div>
 
@@ -508,16 +498,18 @@ export const IssueDetailPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button
-                        onClick={() => addToast('Downloading simulated attachment', att.filename, 'info')}
+                        onClick={() => addToast(t('common.download'), att.filename, 'info')}
                         className="p-1 text-zinc-400 hover:text-blue-600 rounded"
-                        title="Download attachment"
+                        title={t('common.download')}
+                        aria-label={t('common.download')}
                       >
                         <Download size={14} />
                       </button>
                       <button
                         onClick={() => deleteAttachment(issue.id, att.id)}
                         className="p-1 text-zinc-400 hover:text-rose-600 rounded"
-                        title="Remove attachment"
+                        title={t('common.delete')}
+                        aria-label={t('common.delete')}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -542,7 +534,7 @@ export const IssueDetailPage: React.FC = () => {
                   }`}
                 >
                   <Globe size={14} />
-                  <span>All Comments ({issueComments.length})</span>
+                  <span>{t('issueDetail.commentsSection')} ({issueComments.length})</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('internal')}
@@ -553,7 +545,7 @@ export const IssueDetailPage: React.FC = () => {
                   }`}
                 >
                   <Lock size={14} />
-                  <span>Internal Support Notes ({issueComments.filter(c => c.type === 'internal').length})</span>
+                  <span>{t('issueDetail.internalNote')} ({issueComments.filter(c => c.type === 'internal').length})</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('history')}
@@ -564,7 +556,7 @@ export const IssueDetailPage: React.FC = () => {
                   }`}
                 >
                   <History size={14} />
-                  <span>Audit History ({issueActivity.length})</span>
+                  <span>{t('issueDetail.activitySection')} ({issueActivity.length})</span>
                 </button>
               </div>
             </div>
@@ -591,7 +583,7 @@ export const IssueDetailPage: React.FC = () => {
                           className="text-blue-600"
                         />
                         <span className="font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-1">
-                          <Globe size={12} className="text-blue-500" /> Public Reply
+                          <Globe size={12} className="text-blue-500" /> {t('issueDetail.publicComment')}
                         </span>
                       </label>
                       <label className="flex items-center gap-1.5 cursor-pointer">
@@ -603,7 +595,7 @@ export const IssueDetailPage: React.FC = () => {
                           className="text-amber-600"
                         />
                         <span className="font-semibold text-amber-700 dark:text-amber-300 flex items-center gap-1">
-                          <Lock size={12} className="text-amber-500" /> Internal Support Note (Private)
+                          <Lock size={12} className="text-amber-500" /> {t('issueDetail.internalNote')}
                         </span>
                       </label>
                     </div>
@@ -613,22 +605,15 @@ export const IssueDetailPage: React.FC = () => {
                     rows={3}
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
-                    placeholder={
-                      commentType === 'internal'
-                        ? 'Add an internal note visible only to support agents and engineers...'
-                        : 'Write a public response to the reporter...'
-                    }
-                    className={`w-full text-xs rounded-lg border p-3 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none ${
+                    placeholder={t('issueDetail.addCommentPlaceholder')}
+                    className={`w-full text-xs rounded-lg border p-3 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-hidden ${
                       commentType === 'internal'
                         ? 'border-amber-300 dark:border-amber-700 bg-amber-50/40 dark:bg-amber-950/20'
                         : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900'
                     }`}
                   />
 
-                  <div className="flex items-center justify-between">
-                    <p className="text-[11px] text-zinc-400">
-                      {commentType === 'internal' ? '🔒 Internal notes will not be emailed to the client.' : '🌐 Public replies notify the reporter.'}
-                    </p>
+                  <div className="flex items-center justify-end">
                     <button
                       type="submit"
                       disabled={!commentText.trim()}
@@ -639,7 +624,7 @@ export const IssueDetailPage: React.FC = () => {
                       }`}
                     >
                       <Send size={12} />
-                      <span>{commentType === 'internal' ? 'Save Internal Note' : 'Send Reply'}</span>
+                      <span>{t('issueDetail.postCommentBtn')}</span>
                     </button>
                   </div>
                 </form>
@@ -674,11 +659,11 @@ export const IssueDetailPage: React.FC = () => {
                               </span>
                               {isInternal ? (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-1.5 py-0.2 rounded border border-amber-300 dark:border-amber-800">
-                                  <Lock size={10} /> Internal Note
+                                  <Lock size={10} /> {t('issueDetail.internalNote')}
                                 </span>
                               ) : (
                                 <span className="text-[10px] text-blue-600 dark:text-blue-400 font-medium">
-                                  Public Reply
+                                  {t('issueDetail.publicComment')}
                                 </span>
                               )}
                             </div>
@@ -690,7 +675,8 @@ export const IssueDetailPage: React.FC = () => {
                                 <button
                                   onClick={() => deleteComment(c.id)}
                                   className="text-zinc-400 hover:text-rose-500 p-0.5"
-                                  title="Delete comment"
+                                  title={t('common.delete')}
+                                  aria-label={t('common.delete')}
                                 >
                                   <Trash2 size={12} />
                                 </button>
@@ -744,7 +730,7 @@ export const IssueDetailPage: React.FC = () => {
           <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
-                Service Level Agreement
+                {t('reports.slaReport')}
               </span>
               <SLABadge issue={issue} size="sm" />
             </div>
@@ -752,10 +738,7 @@ export const IssueDetailPage: React.FC = () => {
             <div className="space-y-3 text-xs">
               <div>
                 <div className="flex items-center justify-between text-zinc-500 mb-1">
-                  <span>Resolution SLA ({issue.resolutionSLAHours}h window):</span>
-                  <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">
-                    {sla.resolutionText}
-                  </span>
+                  <span>{t('sla.resolutionSLA')}:</span>
                 </div>
                 <div className="w-full h-2 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                   <div
@@ -769,36 +752,19 @@ export const IssueDetailPage: React.FC = () => {
                   />
                 </div>
               </div>
-
-              <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800 space-y-1.5 text-[11px]">
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">First Response:</span>
-                  <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-                    {issue.firstRespondedAt
-                      ? new Date(issue.firstRespondedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                      : 'Pending response'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">Target Window:</span>
-                  <span className="font-mono text-zinc-700 dark:text-zinc-300">
-                    {issue.responseSLAHours}h First Response / {issue.resolutionSLAHours}h Resolution
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Details / Metadata Panel */}
           <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs space-y-4">
             <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
-              Issue Properties
+              {t('issueDetail.detailsSection')}
             </h2>
 
             <div className="space-y-3.5 text-xs">
               {/* Support Level */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Support Tier:</span>
+                <span className="text-zinc-500">{t('common.supportLevel')}:</span>
                 <div className="flex items-center gap-1.5">
                   <SupportBadge level={issue.supportLevel} size="sm" />
                   {issue.supportLevel !== 'L3' && (
@@ -806,7 +772,7 @@ export const IssueDetailPage: React.FC = () => {
                       onClick={() => setIsEscalateOpen(true)}
                       className="text-[11px] font-semibold text-amber-600 hover:underline"
                     >
-                      Escalate
+                      {t('issueDetail.escalateIssue')}
                     </button>
                   )}
                 </div>
@@ -814,13 +780,13 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Assignee */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Assignee:</span>
+                <span className="text-zinc-500">{t('common.assignee')}:</span>
                 <select
                   value={issue.assigneeId || ''}
                   onChange={e => updateIssue(issue.id, { assigneeId: e.target.value || undefined })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none max-w-[170px]"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-hidden max-w-[170px]"
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">{t('common.unassigned')}</option>
                   {users.map(u => (
                     <option key={u.id} value={u.id}>
                       {u.name} ({u.supportLevels.join('/')})
@@ -831,7 +797,7 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Reporter */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Reporter:</span>
+                <span className="text-zinc-500">{t('common.reporter')}:</span>
                 <span className="font-medium text-zinc-800 dark:text-zinc-200">
                   {reporter?.name || 'Unknown'}
                 </span>
@@ -839,21 +805,21 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Project */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Project:</span>
+                <span className="text-zinc-500">{t('common.project')}:</span>
                 <Link to={`/projects/${project?.id}`} className="font-medium text-blue-600 hover:underline">
-                  {project?.name || 'Project'} ({project?.key})
+                  {project?.name || t('common.project')} ({project?.key})
                 </Link>
               </div>
 
               {/* Sprint */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Sprint:</span>
+                <span className="text-zinc-500">{t('common.sprint')}:</span>
                 <select
                   value={issue.sprintId || ''}
                   onChange={e => updateIssue(issue.id, { sprintId: e.target.value || undefined })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none max-w-[170px]"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-hidden max-w-[170px]"
                 >
-                  <option value="">Backlog</option>
+                  <option value="">{t('backlog.title')}</option>
                   {sprints
                     .filter(s => s.projectId === issue.projectId)
                     .map(s => (
@@ -866,13 +832,13 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Epic */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Epic:</span>
+                <span className="text-zinc-500">{t('common.epic')}:</span>
                 <select
                   value={issue.epicId || ''}
                   onChange={e => updateIssue(issue.id, { epicId: e.target.value || undefined })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none max-w-[170px]"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-hidden max-w-[170px]"
                 >
-                  <option value="">None</option>
+                  <option value="">{t('common.none')}</option>
                   {epics
                     .filter(e => e.projectId === issue.projectId)
                     .map(e => (
@@ -885,46 +851,46 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Story Points */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Story Points:</span>
+                <span className="text-zinc-500">{t('common.storyPoints')}:</span>
                 <input
                   type="number"
                   min="0"
                   max="100"
                   value={issue.storyPoints || ''}
                   onChange={e => updateIssue(issue.id, { storyPoints: e.target.value ? parseInt(e.target.value, 10) : undefined })}
-                  className="w-16 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none text-right"
+                  className="w-16 rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-hidden text-right"
                   placeholder="0"
                 />
               </div>
 
               {/* Estimated & Remaining Time */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Time Tracking:</span>
+                <span className="text-zinc-500">{t('common.estimatedTime')}:</span>
                 <span className="font-mono text-zinc-700 dark:text-zinc-300">
-                  {issue.remainingTime || issue.estimatedTime || 'None'} est.
+                  {issue.remainingTime || issue.estimatedTime || t('common.none')}
                 </span>
               </div>
 
               {/* Due Date */}
               <div className="flex items-center justify-between">
-                <span className="text-zinc-500">Due Date:</span>
+                <span className="text-zinc-500">{t('common.dueDate')}:</span>
                 <input
                   type="date"
                   value={issue.dueDate || ''}
                   onChange={e => updateIssue(issue.id, { dueDate: e.target.value || undefined })}
-                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                  className="rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                 />
               </div>
 
               {/* Labels */}
               <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-zinc-500">Labels:</span>
+                  <span className="text-zinc-500">{t('common.labels')}:</span>
                   <button
                     onClick={() => setShowAddLabel(prev => !prev)}
                     className="text-[11px] font-semibold text-blue-600 hover:underline"
                   >
-                    + Add
+                    + {t('common.create')}
                   </button>
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -937,6 +903,7 @@ export const IssueDetailPage: React.FC = () => {
                       <button
                         onClick={() => handleRemoveLabel(l)}
                         className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                        aria-label={t('common.delete')}
                       >
                         <X size={10} />
                       </button>
@@ -950,14 +917,14 @@ export const IssueDetailPage: React.FC = () => {
                       type="text"
                       value={newLabel}
                       onChange={e => setNewLabel(e.target.value)}
-                      placeholder="label-name"
-                      className="flex-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-zinc-900 dark:text-zinc-100 focus:outline-none"
+                      placeholder="label"
+                      className="flex-1 text-xs rounded border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 text-zinc-900 dark:text-zinc-100 focus:outline-hidden"
                     />
                     <button
                       type="submit"
                       className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-semibold"
                     >
-                      Add
+                      {t('common.create')}
                     </button>
                   </form>
                 )}
@@ -965,9 +932,8 @@ export const IssueDetailPage: React.FC = () => {
 
               {/* Dates Audit */}
               <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 text-[10px] text-zinc-400 space-y-1 font-mono">
-                <div>Created: {new Date(issue.createdDate).toLocaleString()}</div>
-                <div>Updated: {new Date(issue.updatedDate).toLocaleString()}</div>
-                {issue.resolvedAt && <div>Resolved: {new Date(issue.resolvedAt).toLocaleString()}</div>}
+                <div>{t('common.created')}: {new Date(issue.createdDate).toLocaleString()}</div>
+                <div>{t('common.updated')}: {new Date(issue.updatedDate).toLocaleString()}</div>
               </div>
             </div>
           </div>
@@ -985,9 +951,9 @@ export const IssueDetailPage: React.FC = () => {
 
       <ConfirmModal
         isOpen={isDeleteOpen}
-        title="Delete Issue"
-        message={`Are you sure you want to delete ${issue.id}? This will remove all associated comments, internal notes, and attachments.`}
-        confirmLabel="Delete Ticket"
+        title={t('issueDetail.deleteConfirmTitle')}
+        message={t('issueDetail.deleteConfirmMessage', { id: issue.id })}
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           deleteIssue(issue.id);
           setIsDeleteOpen(false);

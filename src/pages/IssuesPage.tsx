@@ -4,15 +4,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Search, 
-  Filter, 
-  ArrowUpDown, 
   Bookmark, 
   ArrowUpRight, 
   Trash2, 
-  MoreVertical,
-  SlidersHorizontal,
   RotateCcw,
-  CheckSquare,
   LayoutList,
   LayoutGrid
 } from 'lucide-react';
@@ -35,12 +30,15 @@ export const IssuesPage: React.FC = () => {
     currentUser, 
     savedFilters, 
     saveFilter, 
-    deleteFilter,
-    updateIssue,
     deleteIssue,
-    addToast
+    addToast,
+    t,
+    formatStatus,
+    formatPriority,
+    formatType,
+    formatSLAStatus
   } = useApp();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   // Filters State
@@ -215,7 +213,7 @@ export const IssuesPage: React.FC = () => {
     if (sf.filters.type) setSelectedType(sf.filters.type);
     else setSelectedType('ALL');
 
-    addToast('Filter Applied', `Switched to preset "${sf.name}"`, 'info');
+    addToast(t('common.info'), sf.name, 'info');
   };
 
   return (
@@ -225,14 +223,14 @@ export const IssuesPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Issues &amp; Tickets
+              {t('issues.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">
-              {sortedIssues.length} of {issues.length}
+              {t('issues.showingCount', { count: sortedIssues.length, total: issues.length })}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Browse, filter, assign, and escalate issues across all projects and support tiers.
+            {t('issues.subtitle')}
           </p>
         </div>
 
@@ -242,14 +240,16 @@ export const IssuesPage: React.FC = () => {
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-md ${viewMode === 'table' ? 'bg-white dark:bg-zinc-800 text-blue-600 shadow-xs' : 'text-zinc-500'}`}
-              title="Table View"
+              title={t('issues.viewTable')}
+              aria-label={t('issues.viewTable')}
             >
               <LayoutList size={15} />
             </button>
             <button
               onClick={() => setViewMode('cards')}
               className={`p-1.5 rounded-md ${viewMode === 'cards' ? 'bg-white dark:bg-zinc-800 text-blue-600 shadow-xs' : 'text-zinc-500'}`}
-              title="Cards View"
+              title={t('issues.viewCards')}
+              aria-label={t('issues.viewCards')}
             >
               <LayoutGrid size={15} />
             </button>
@@ -260,7 +260,7 @@ export const IssuesPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
           >
             <Plus size={15} className="stroke-[2.5]" />
-            <span>Create Issue</span>
+            <span>{t('nav.createIssue')}</span>
           </button>
         </div>
       </div>
@@ -275,15 +275,15 @@ export const IssuesPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search by ID, title, or label..."
-              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:border-blue-500"
+              placeholder={t('issues.searchPlaceholder')}
+              className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-hidden focus:border-blue-500"
             />
           </div>
 
           {/* Saved Filters & Actions */}
           <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
             <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider shrink-0">
-              Presets:
+              {t('common.quickFilters')}:
             </span>
             {savedFilters.map(sf => (
               <button
@@ -300,13 +300,14 @@ export const IssuesPage: React.FC = () => {
               onClick={() => setIsSaveFilterOpen(true)}
               className="px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium shrink-0"
             >
-              + Save current
+              + {t('common.save')}
             </button>
 
             <button
               onClick={resetAllFilters}
               className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded shrink-0 ml-auto"
-              title="Reset all filters"
+              title={t('common.clearFilters')}
+              aria-label={t('common.clearFilters')}
             >
               <RotateCcw size={14} />
             </button>
@@ -318,74 +319,74 @@ export const IssuesPage: React.FC = () => {
           {/* Support Level */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Support Level
+              {t('common.supportLevel')}
             </label>
             <select
               value={selectedSupportLevel}
               onChange={e => setSelectedSupportLevel(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All Levels</option>
-              <option value="L1">L1 - Frontline</option>
-              <option value="L2">L2 - Technical</option>
-              <option value="L3">L3 - Engineering</option>
+              <option value="ALL">{t('issues.filterSupport')}</option>
+              <option value="L1">L1</option>
+              <option value="L2">L2</option>
+              <option value="L3">L3</option>
             </select>
           </div>
 
           {/* Status */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Status
+              {t('common.status')}
             </label>
             <select
               value={selectedStatus}
               onChange={e => setSelectedStatus(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All Statuses</option>
-              <option value="Open">Open</option>
-              <option value="To Do">To Do</option>
-              <option value="In Progress">In Progress</option>
-              <option value="In Review">In Review</option>
-              <option value="Testing">Testing</option>
-              <option value="Blocked">Blocked</option>
-              <option value="Resolved">Resolved</option>
-              <option value="Closed">Closed</option>
+              <option value="ALL">{t('issues.filterStatus')}</option>
+              <option value="Open">{formatStatus('Open')}</option>
+              <option value="To Do">{formatStatus('To Do')}</option>
+              <option value="In Progress">{formatStatus('In Progress')}</option>
+              <option value="In Review">{formatStatus('In Review')}</option>
+              <option value="Testing">{formatStatus('Testing')}</option>
+              <option value="Blocked">{formatStatus('Blocked')}</option>
+              <option value="Resolved">{formatStatus('Resolved')}</option>
+              <option value="Closed">{formatStatus('Closed')}</option>
             </select>
           </div>
 
           {/* Priority */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Priority
+              {t('common.priority')}
             </label>
             <select
               value={selectedPriority}
               onChange={e => setSelectedPriority(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All Priorities</option>
-              <option value="Highest">Highest (P0)</option>
-              <option value="High">High (P1)</option>
-              <option value="Medium">Medium (P2)</option>
-              <option value="Low">Low (P3)</option>
-              <option value="Lowest">Lowest (P4)</option>
+              <option value="ALL">{t('issues.filterPriority')}</option>
+              <option value="Highest">{formatPriority('Highest')}</option>
+              <option value="High">{formatPriority('High')}</option>
+              <option value="Medium">{formatPriority('Medium')}</option>
+              <option value="Low">{formatPriority('Low')}</option>
+              <option value="Lowest">{formatPriority('Lowest')}</option>
             </select>
           </div>
 
           {/* Assignee */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Assignee
+              {t('common.assignee')}
             </label>
             <select
               value={selectedAssignee}
               onChange={e => setSelectedAssignee(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All Assignees</option>
-              <option value={currentUser.id}>Assigned to Me</option>
-              <option value="UNASSIGNED">Unassigned</option>
+              <option value="ALL">{t('issues.filterAssignee')}</option>
+              <option value={currentUser.id}>{t('nav.myIssues')}</option>
+              <option value="UNASSIGNED">{t('common.unassigned')}</option>
               {users.map(u => (
                 <option key={u.id} value={u.id}>
                   {u.name}
@@ -397,14 +398,14 @@ export const IssuesPage: React.FC = () => {
           {/* Project */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Project
+              {t('common.project')}
             </label>
             <select
               value={selectedProject}
               onChange={e => setSelectedProject(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All Projects</option>
+              <option value="ALL">{t('issues.filterProject')}</option>
               {projects.map(p => (
                 <option key={p.id} value={p.id}>
                   {p.name} ({p.key})
@@ -416,35 +417,35 @@ export const IssuesPage: React.FC = () => {
           {/* SLA Status */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              SLA Status
+              {t('common.details')}
             </label>
             <select
               value={selectedSLA}
               onChange={e => setSelectedSLA(e.target.value)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="ALL">All SLA</option>
-              <option value="Within SLA">Within SLA</option>
-              <option value="At Risk">At Risk</option>
-              <option value="Breached">Breached</option>
+              <option value="ALL">{t('common.all')}</option>
+              <option value="Within SLA">{formatSLAStatus('Within SLA')}</option>
+              <option value="At Risk">{formatSLAStatus('At Risk')}</option>
+              <option value="Breached">{formatSLAStatus('Breached')}</option>
             </select>
           </div>
 
           {/* Sort By */}
           <div>
             <label className="block text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Sort By
+              {t('common.filter')}
             </label>
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as any)}
-              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-none"
+              className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-2 py-1.5 focus:outline-hidden"
             >
-              <option value="created_desc">Newest First</option>
-              <option value="created_asc">Oldest First</option>
-              <option value="priority">Priority (P0 → P4)</option>
-              <option value="sla">SLA Deadline</option>
-              <option value="status">Status</option>
+              <option value="created_desc">{t('common.created')} (↓)</option>
+              <option value="created_asc">{t('common.created')} (↑)</option>
+              <option value="priority">{t('common.priority')}</option>
+              <option value="sla">{t('sla.timeLeft')}</option>
+              <option value="status">{t('common.status')}</option>
             </select>
           </div>
         </div>
@@ -453,13 +454,12 @@ export const IssuesPage: React.FC = () => {
       {/* Main Issues Listing */}
       {sortedIssues.length === 0 ? (
         <div className="p-12 text-center rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800">
-          <p className="text-base font-semibold text-zinc-800 dark:text-zinc-200">No issues found matching filters</p>
-          <p className="text-xs text-zinc-500 mt-1">Try broadening your criteria or reset the filters.</p>
+          <p className="text-base font-semibold text-zinc-800 dark:text-zinc-200">{t('issues.noMatching')}</p>
           <button
             onClick={resetAllFilters}
             className="mt-4 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
           >
-            Reset All Filters
+            {t('common.clearFilters')}
           </button>
         </div>
       ) : viewMode === 'table' ? (
@@ -469,20 +469,19 @@ export const IssuesPage: React.FC = () => {
             <table className="w-full text-left text-xs">
               <thead className="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Key &amp; Type</th>
-                  <th className="py-3 px-4">Summary</th>
-                  <th className="py-3 px-4">Support Tier</th>
-                  <th className="py-3 px-4">Priority</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Assignee</th>
-                  <th className="py-3 px-4">SLA Window</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderId')} &amp; {t('issues.tableHeaderType')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderTitle')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderTier')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderPriority')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderStatus')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderAssignee')}</th>
+                  <th className="py-3 px-4">{t('issues.tableHeaderSLA')}</th>
+                  <th className="py-3 px-4 text-right">{t('issues.tableHeaderActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
                 {sortedIssues.map(issue => {
                   const assignee = users.find(u => u.id === issue.assigneeId);
-                  const project = projects.find(p => p.id === issue.projectId);
 
                   return (
                     <tr
@@ -552,7 +551,7 @@ export const IssuesPage: React.FC = () => {
                             <span className="text-zinc-800 dark:text-zinc-200">{assignee.name}</span>
                           </div>
                         ) : (
-                          <span className="text-zinc-400 italic">Unassigned</span>
+                          <span className="text-zinc-400 italic">{t('common.unassigned')}</span>
                         )}
                       </td>
 
@@ -568,22 +567,23 @@ export const IssuesPage: React.FC = () => {
                             <button
                               onClick={() => setEscalatingIssue(issue)}
                               className="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 transition"
-                              title="Escalate ticket"
+                              title={t('issueDetail.escalateIssue')}
                             >
                               <ArrowUpRight size={12} />
-                              <span className="hidden xl:inline">Escalate</span>
+                              <span className="hidden xl:inline">{t('issueDetail.escalateIssue')}</span>
                             </button>
                           )}
                           <button
                             onClick={() => navigate(`/issues/${issue.id}`)}
                             className="px-2 py-1 rounded text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
                           >
-                            View
+                            {t('common.view')}
                           </button>
                           <button
                             onClick={() => setDeletingIssueId(issue.id)}
                             className="p-1 rounded text-zinc-400 hover:text-rose-600 transition"
-                            title="Delete issue"
+                            title={t('common.delete')}
+                            aria-label={t('common.delete')}
                           >
                             <Trash2 size={13} />
                           </button>
@@ -628,7 +628,7 @@ export const IssuesPage: React.FC = () => {
                   </h3>
 
                   <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                    {issue.description || 'No description provided.'}
+                    {issue.description || t('issueDetail.noDescription')}
                   </p>
                 </div>
 
@@ -651,7 +651,7 @@ export const IssuesPage: React.FC = () => {
                           <span className="text-[11px] text-zinc-700 dark:text-zinc-300">{assignee.name}</span>
                         </>
                       ) : (
-                        <span className="text-[11px] text-zinc-400 italic">Unassigned</span>
+                        <span className="text-[11px] text-zinc-400 italic">{t('common.unassigned')}</span>
                       )}
                     </div>
 
@@ -660,7 +660,7 @@ export const IssuesPage: React.FC = () => {
                         <button
                           onClick={() => setEscalatingIssue(issue)}
                           className="p-1 rounded text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40"
-                          title="Escalate"
+                          title={t('issueDetail.escalateIssue')}
                         >
                           <ArrowUpRight size={14} />
                         </button>
@@ -668,7 +668,7 @@ export const IssuesPage: React.FC = () => {
                       <button
                         onClick={() => setDeletingIssueId(issue.id)}
                         className="p-1 rounded text-zinc-400 hover:text-rose-500"
-                        title="Delete"
+                        title={t('common.delete')}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -689,16 +689,15 @@ export const IssuesPage: React.FC = () => {
       {isSaveFilterOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 max-w-sm w-full shadow-2xl">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Save Current Filter Preset</h3>
-            <p className="text-xs text-zinc-500 mt-1">Name this combination of filters for 1-click access anytime.</p>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t('common.save')}</h3>
             <form onSubmit={handleSaveFilter} className="mt-4 space-y-3">
               <input
                 type="text"
                 required
                 value={newFilterName}
                 onChange={e => setNewFilterName(e.target.value)}
-                placeholder="e.g. Critical L2 Backend Issues"
-                className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-500"
+                placeholder="Filter preset name..."
+                className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:border-blue-500"
               />
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
@@ -706,13 +705,13 @@ export const IssuesPage: React.FC = () => {
                   onClick={() => setIsSaveFilterOpen(false)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
-                  Save Preset
+                  {t('common.save')}
                 </button>
               </div>
             </form>
@@ -731,9 +730,9 @@ export const IssuesPage: React.FC = () => {
       )}
       <ConfirmModal
         isOpen={!!deletingIssueId}
-        title="Delete Issue"
-        message={`Are you sure you want to permanently delete ticket ${deletingIssueId}? This action cannot be undone.`}
-        confirmLabel="Delete Ticket"
+        title={t('issueDetail.deleteConfirmTitle')}
+        message={t('issueDetail.deleteConfirmMessage', { id: deletingIssueId || '' })}
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (deletingIssueId) deleteIssue(deletingIssueId);
           setDeletingIssueId(null);

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { notifications, markNotificationRead, markAllNotificationsRead } = useApp();
+  const { notifications, markNotificationRead, markAllNotificationsRead, t } = useApp();
   const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -51,6 +51,8 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   };
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   return (
     <div
       ref={panelRef}
@@ -60,10 +62,10 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
         <div className="flex items-center gap-2">
           <Bell size={16} className="text-zinc-500" />
-          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Notifications</span>
-          {notifications.filter(n => !n.read).length > 0 && (
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{t('notifications.title')}</span>
+          {unreadCount > 0 && (
             <span className="px-1.5 py-0.2 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded text-[10px] font-semibold">
-              {notifications.filter(n => !n.read).length} new
+              {unreadCount}
             </span>
           )}
         </div>
@@ -72,7 +74,7 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
           className="text-[11px] text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium flex items-center gap-1"
         >
           <Check size={12} />
-          Mark all as read
+          {t('notifications.markAllRead')}
         </button>
       </div>
 
@@ -80,7 +82,7 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       <div className="max-h-80 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800/60">
         {notifications.length === 0 ? (
           <div className="p-6 text-center text-xs text-zinc-500 dark:text-zinc-400">
-            No notifications right now.
+            {t('notifications.noNotifications')}
           </div>
         ) : (
           notifications.map(notif => (
@@ -116,7 +118,7 @@ export const NotificationPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       </div>
 
       <div className="px-4 py-2 bg-zinc-50 dark:bg-zinc-950/60 border-t border-zinc-100 dark:border-zinc-800 text-center">
-        <span className="text-[11px] text-zinc-400">GoldMine support routing active</span>
+        <span className="text-[11px] text-zinc-400">{t('nav.slaOnline')}</span>
       </div>
     </div>
   );

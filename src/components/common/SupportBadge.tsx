@@ -1,6 +1,7 @@
 import React from 'react';
 import { SupportLevel } from '../../types';
 import { Shield, Cpu, Flame } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   level: SupportLevel;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export const SupportBadge: React.FC<Props> = ({ level, size = 'md', showLabel = true }) => {
+  const { t } = useApp();
+
   const getStyle = () => {
     switch (level) {
       case 'L1':
@@ -16,21 +19,24 @@ export const SupportBadge: React.FC<Props> = ({ level, size = 'md', showLabel = 
           bg: 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800',
           dot: 'bg-sky-500',
           icon: Shield,
-          title: 'L1 - First Level Support',
+          title: t('support.l1Full'),
+          label: t('support.firstLevel'),
         };
       case 'L2':
         return {
           bg: 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
           dot: 'bg-amber-500',
           icon: Cpu,
-          title: 'L2 - Technical Support',
+          title: t('support.l2Full'),
+          label: t('support.technical'),
         };
       case 'L3':
         return {
           bg: 'bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
           dot: 'bg-purple-500',
           icon: Flame,
-          title: 'L3 - Expert / Engineering Support',
+          title: t('support.l3Full'),
+          label: t('support.engineering'),
         };
     }
   };
@@ -60,7 +66,7 @@ export const SupportBadge: React.FC<Props> = ({ level, size = 'md', showLabel = 
       <span>{level}</span>
       {showLabel && size !== 'sm' && (
         <span className="opacity-75 font-normal text-[10px] uppercase tracking-wider">
-          {level === 'L1' ? 'First Level' : level === 'L2' ? 'Technical' : 'Engineering'}
+          {config.label}
         </span>
       )}
     </span>

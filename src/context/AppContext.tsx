@@ -17,6 +17,21 @@ import {
   EscalationRecord
 } from '../types';
 import { storage } from '../services/storage';
+import { 
+  Language, 
+  getSavedLanguage, 
+  saveLanguage, 
+  translateKey,
+  formatStatus as i18nFormatStatus,
+  formatPriority as i18nFormatPriority,
+  formatType as i18nFormatType,
+  formatSupportLevel as i18nFormatSupportLevel,
+  formatRole as i18nFormatRole,
+  formatSLAStatus as i18nFormatSLAStatus,
+  formatProjectStatus as i18nFormatProjectStatus,
+  formatUserStatus as i18nFormatUserStatus,
+  formatSprintStatus as i18nFormatSprintStatus,
+} from '../i18n';
 
 export interface ToastItem {
   id: string;
@@ -41,6 +56,20 @@ interface AppContextType {
   toasts: ToastItem[];
   unreadNotificationCount: number;
   isAuthenticated: boolean;
+
+  // i18n
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (path: string, params?: Record<string, string | number>) => string;
+  formatStatus: (status: string) => string;
+  formatPriority: (priority: string) => string;
+  formatType: (type: string) => string;
+  formatSupportLevel: (level: string) => string;
+  formatRole: (role: string) => string;
+  formatSLAStatus: (slaStatus: string) => string;
+  formatProjectStatus: (status: string) => string;
+  formatUserStatus: (status: string) => string;
+  formatSprintStatus: (status: string) => string;
 
   // Authentication
   login: (userIdOrEmail: string, password: string) => { success: boolean; error?: string };
@@ -129,6 +158,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return storage.getAuthSession().isAuthenticated;
   });
+
+  // Language management
+  const [language, setLanguageState] = useState<Language>(() => getSavedLanguage());
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    saveLanguage(lang);
+  }, []);
+
+  const t = useCallback((path: string, params?: Record<string, string | number>) => {
+    return translateKey(language, path, params);
+  }, [language]);
+
+  const formatStatus = useCallback((status: string) => i18nFormatStatus(status, language), [language]);
+  const formatPriority = useCallback((priority: string) => i18nFormatPriority(priority, language), [language]);
+  const formatType = useCallback((type: string) => i18nFormatType(type, language), [language]);
+  const formatSupportLevel = useCallback((level: string) => i18nFormatSupportLevel(level, language), [language]);
+  const formatRole = useCallback((role: string) => i18nFormatRole(role, language), [language]);
+  const formatSLAStatus = useCallback((slaStatus: string) => i18nFormatSLAStatus(slaStatus, language), [language]);
+  const formatProjectStatus = useCallback((status: string) => i18nFormatProjectStatus(status, language), [language]);
+  const formatUserStatus = useCallback((status: string) => i18nFormatUserStatus(status, language), [language]);
+  const formatSprintStatus = useCallback((status: string) => i18nFormatSprintStatus(status, language), [language]);
 
   // Theme management
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -926,6 +977,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     toasts,
     unreadNotificationCount,
     isAuthenticated,
+    language,
+    setLanguage,
+    t,
+    formatStatus,
+    formatPriority,
+    formatType,
+    formatSupportLevel,
+    formatRole,
+    formatSLAStatus,
+    formatProjectStatus,
+    formatUserStatus,
+    formatSprintStatus,
     login,
     logout,
     updateUserPassword,
@@ -981,6 +1044,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     toasts,
     unreadNotificationCount,
     isAuthenticated,
+    language,
+    setLanguage,
+    t,
+    formatStatus,
+    formatPriority,
+    formatType,
+    formatSupportLevel,
+    formatRole,
+    formatSLAStatus,
+    formatProjectStatus,
+    formatUserStatus,
+    formatSprintStatus,
     login,
     logout,
     updateUserPassword,
@@ -1031,4 +1106,36 @@ export function useApp() {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
+}
+
+export function useTranslation() {
+  const { 
+    language, 
+    setLanguage, 
+    t, 
+    formatStatus, 
+    formatPriority, 
+    formatType, 
+    formatSupportLevel, 
+    formatRole, 
+    formatSLAStatus, 
+    formatProjectStatus, 
+    formatUserStatus, 
+    formatSprintStatus 
+  } = useApp();
+  
+  return { 
+    language, 
+    setLanguage, 
+    t, 
+    formatStatus, 
+    formatPriority, 
+    formatType, 
+    formatSupportLevel, 
+    formatRole, 
+    formatSLAStatus, 
+    formatProjectStatus, 
+    formatUserStatus, 
+    formatSprintStatus 
+  };
 }

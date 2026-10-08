@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { issues, projects, epics, users } = useApp();
+  const { issues, projects, epics, users, t } = useApp();
   const [query, setQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -77,13 +77,14 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Search tickets by ID (INB-1024), keywords, labels, projects, epics..."
-            className="flex-1 text-sm bg-transparent border-none text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none"
+            placeholder={t('modals.searchPlaceholder')}
+            className="flex-1 text-sm bg-transparent border-none text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-hidden"
           />
           {query && (
             <button
               onClick={() => setQuery('')}
               className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1"
+              aria-label={t('common.clear')}
             >
               <X size={14} />
             </button>
@@ -100,14 +101,13 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
         <div className="max-h-[60vh] overflow-y-auto p-2 divide-y divide-zinc-100 dark:divide-zinc-800/60">
           {!trimmed && (
             <div className="p-6 text-center text-zinc-500 dark:text-zinc-400">
-              <p className="text-xs">Type a keyword, ticket ID like <span className="font-mono font-semibold text-blue-600">INB-1002</span>, or project name.</p>
+              <p className="text-xs">{t('modals.searchTip')}</p>
             </div>
           )}
 
           {trimmed && matchingIssues.length === 0 && matchingProjects.length === 0 && matchingEpics.length === 0 && (
             <div className="p-8 text-center text-zinc-500 dark:text-zinc-400">
-              <p className="text-sm font-medium">No results found for &ldquo;{query}&rdquo;</p>
-              <p className="text-xs mt-1">Try searching by ticket ID (e.g. INB-1001), team member name, or label.</p>
+              <p className="text-sm font-medium">{t('modals.noSearchResults')}</p>
             </div>
           )}
 
@@ -115,7 +115,7 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
           {matchingIssues.length > 0 && (
             <div className="py-2">
               <div className="px-3 py-1 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                Issues ({matchingIssues.length})
+                {t('nav.issues')} ({matchingIssues.length})
               </div>
               <div className="space-y-1 mt-1">
                 {matchingIssues.map(issue => (
@@ -147,7 +147,7 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
           {matchingProjects.length > 0 && (
             <div className="py-2">
               <div className="px-3 py-1 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                Projects
+                {t('nav.projects')}
               </div>
               <div className="space-y-1 mt-1">
                 {matchingProjects.map(project => (
@@ -171,7 +171,7 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
           {matchingEpics.length > 0 && (
             <div className="py-2">
               <div className="px-3 py-1 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                Epics
+                {t('nav.epics')}
               </div>
               <div className="space-y-1 mt-1">
                 {matchingEpics.map(epic => (
@@ -194,8 +194,7 @@ export const GlobalSearchModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
         {/* Footer */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-50 dark:bg-zinc-950/60 border-t border-zinc-100 dark:border-zinc-800 text-[11px] text-zinc-400">
-          <span>Press <kbd className="font-mono bg-zinc-200 dark:bg-zinc-800 px-1 py-0.5 rounded text-zinc-600 dark:text-zinc-300">Enter</kbd> to select</span>
-          <span>Global Realtime Index</span>
+          <span>{t('nav.slaOnline')}</span>
         </div>
       </div>
     </div>

@@ -24,7 +24,18 @@ import { CreateIssueModal } from '../components/issue/CreateIssueModal';
 export const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { projects, issues, epics, sprints, users, createEpic } = useApp();
+  const { 
+    projects, 
+    issues, 
+    epics, 
+    sprints, 
+    users, 
+    createEpic, 
+    t, 
+    formatStatus, 
+    formatPriority, 
+    formatSupportLevel 
+  } = useApp();
 
   const project = projects.find(p => p.id === id);
   const [isCreateEpicOpen, setIsCreateEpicOpen] = useState(false);
@@ -37,12 +48,12 @@ export const ProjectDetailPage: React.FC = () => {
   if (!project) {
     return (
       <div className="p-12 text-center rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-        <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Project Not Found</h2>
+        <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-200">{t('common.noResults')}</h2>
         <button
           onClick={() => navigate('/projects')}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold"
         >
-          Back to Projects
+          {t('projectDetail.backToProjects')}
         </button>
       </div>
     );
@@ -80,7 +91,7 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <Link to="/projects" className="hover:text-blue-600 flex items-center gap-1">
             <ArrowLeft size={14} />
-            <span>Projects</span>
+            <span>{t('nav.projects')}</span>
           </Link>
           <span>/</span>
           <span className="font-bold text-zinc-900 dark:text-zinc-100">{project.name}</span>
@@ -92,21 +103,21 @@ export const ProjectDetailPage: React.FC = () => {
             className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 transition flex items-center gap-1.5 shadow-2xs"
           >
             <Kanban size={13} />
-            <span>Open Board</span>
+            <span>{t('projectDetail.openBoard')}</span>
           </button>
           <button
             onClick={() => navigate(`/backlog?project=${project.id}`)}
             className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 transition flex items-center gap-1.5 shadow-2xs"
           >
             <ListOrdered size={13} />
-            <span>Backlog</span>
+            <span>{t('nav.backlog')}</span>
           </button>
           <button
             onClick={() => setIsCreateIssueOpen(true)}
             className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-xs"
           >
             <Plus size={14} className="stroke-[2.5]" />
-            <span>Create Issue</span>
+            <span>{t('nav.createIssue')}</span>
           </button>
         </div>
       </div>
@@ -138,7 +149,7 @@ export const ProjectDetailPage: React.FC = () => {
                 referrerPolicy="no-referrer"
               />
               <div>
-                <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">Project Lead</span>
+                <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">{t('projectDetail.projectLead')}</span>
                 <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{lead.name}</p>
                 <p className="text-[11px] text-zinc-500">{lead.role}</p>
               </div>
@@ -149,7 +160,7 @@ export const ProjectDetailPage: React.FC = () => {
         {/* Progress Metrics Bar */}
         <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800">
           <div className="flex items-center justify-between text-xs mb-2">
-            <span className="text-zinc-500 font-medium">Issue Completion Progress:</span>
+            <span className="text-zinc-500 font-medium">{t('projectDetail.completionProgress')}</span>
             <span className="font-mono font-semibold text-zinc-800 dark:text-zinc-200">
               {doneCount} of {projectIssues.length} completed ({projectIssues.length > 0 ? Math.round((doneCount / projectIssues.length) * 100) : 0}%)
             </span>
@@ -158,31 +169,31 @@ export const ProjectDetailPage: React.FC = () => {
             <div
               style={{ width: `${projectIssues.length ? (doneCount / projectIssues.length) * 100 : 0}%` }}
               className="bg-emerald-500 h-full"
-              title="Resolved / Done"
+              title={t('status.Resolved')}
             />
             <div
               style={{ width: `${projectIssues.length ? (inProgressCount / projectIssues.length) * 100 : 0}%` }}
               className="bg-blue-500 h-full"
-              title="In Progress"
+              title={t('projectDetail.inFlight')}
             />
             <div
               style={{ width: `${projectIssues.length ? (openCount / projectIssues.length) * 100 : 0}%` }}
               className="bg-zinc-300 dark:bg-zinc-600 h-full"
-              title="To Do / Open"
+              title={t('status.ToDo')}
             />
           </div>
           <div className="flex items-center gap-4 text-[11px] text-zinc-500 mt-2">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span>Resolved ({doneCount})</span>
+              <span>{t('status.Resolved')} ({doneCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-              <span>In Flight ({inProgressCount})</span>
+              <span>{t('projectDetail.inFlight')} ({inProgressCount})</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-zinc-300 dark:bg-zinc-600" />
-              <span>To Do ({openCount})</span>
+              <span>{t('status.ToDo')} ({openCount})</span>
             </div>
           </div>
         </div>
@@ -194,7 +205,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <Layers size={16} className="text-purple-500" />
             <h2 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
-              Project Epics ({projectEpics.length})
+              {t('projectDetail.projectEpics')} ({projectEpics.length})
             </h2>
           </div>
           <button
@@ -202,12 +213,12 @@ export const ProjectDetailPage: React.FC = () => {
             className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"
           >
             <Plus size={13} />
-            <span>Add Epic</span>
+            <span>{t('projectDetail.addEpic')}</span>
           </button>
         </div>
 
         {projectEpics.length === 0 ? (
-          <p className="text-xs text-zinc-400 italic">No epics created yet for this project.</p>
+          <p className="text-xs text-zinc-400 italic">{t('projectDetail.noEpics')}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {projectEpics.map(epic => {
@@ -230,7 +241,7 @@ export const ProjectDetailPage: React.FC = () => {
                     <p className="text-[11px] text-zinc-500 line-clamp-2">{epic.summary}</p>
                   )}
                   <div className="text-[10px] font-mono text-zinc-400">
-                    {epicIssues.length} assigned issues
+                    {epicIssues.length} {t('projectDetail.assignedIssues')}
                   </div>
                 </div>
               );
@@ -243,13 +254,13 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="p-6 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
-            All Project Issues ({projectIssues.length})
+            {t('projectDetail.allIssues')} ({projectIssues.length})
           </h2>
           <button
             onClick={() => navigate(`/issues?project=${project.id}`)}
             className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1"
           >
-            <span>View in full issues filter</span>
+            <span>{t('projectDetail.viewAllIssues')}</span>
             <ChevronRight size={13} />
           </button>
         </div>
@@ -258,12 +269,12 @@ export const ProjectDetailPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 uppercase">
               <tr>
-                <th className="py-2.5 px-3">Key</th>
-                <th className="py-2.5 px-3">Title</th>
-                <th className="py-2.5 px-3">Tier</th>
-                <th className="py-2.5 px-3">Priority</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3">SLA Status</th>
+                <th className="py-2.5 px-3">{t('supportCenter.ticket')}</th>
+                <th className="py-2.5 px-3">{t('supportCenter.summary')}</th>
+                <th className="py-2.5 px-3">{t('supportCenter.tier')}</th>
+                <th className="py-2.5 px-3">{t('common.priority')}</th>
+                <th className="py-2.5 px-3">{t('common.status')}</th>
+                <th className="py-2.5 px-3">{t('sla.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -298,11 +309,11 @@ export const ProjectDetailPage: React.FC = () => {
       {isCreateEpicOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 max-w-sm w-full shadow-2xl">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Create Epic</h3>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{t('projectDetail.createEpicModalTitle')}</h3>
             <form onSubmit={handleCreateEpic} className="mt-4 space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Epic Name *
+                  {t('projectDetail.epicName')} *
                 </label>
                 <input
                   type="text"
@@ -316,7 +327,7 @@ export const ProjectDetailPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Tag Color
+                  {t('projectDetail.tagColor')}
                 </label>
                 <input
                   type="color"
@@ -328,7 +339,7 @@ export const ProjectDetailPage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Summary / Scope
+                  {t('projectDetail.summaryScope')}
                 </label>
                 <textarea
                   rows={2}
@@ -345,13 +356,13 @@ export const ProjectDetailPage: React.FC = () => {
                   onClick={() => setIsCreateEpicOpen(false)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
-                  Create Epic
+                  {t('projectDetail.createEpicModalTitle')}
                 </button>
               </div>
             </form>

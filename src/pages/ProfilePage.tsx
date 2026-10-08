@@ -16,7 +16,7 @@ import { SupportBadge } from '../components/common/SupportBadge';
 import { calculateSLAInfo } from '../services/storage';
 
 export const ProfilePage: React.FC = () => {
-  const { currentUser, setCurrentUser, updateUser, issues, addToast } = useApp();
+  const { currentUser, setCurrentUser, updateUser, issues, addToast, t, formatRole } = useApp();
 
   const [name, setName] = useState(currentUser.name);
   const [email, setEmail] = useState(currentUser.email);
@@ -49,7 +49,7 @@ export const ProfilePage: React.FC = () => {
       avatar: avatar.trim(),
       supportLevels,
     });
-    addToast('Profile Updated', 'Your user credentials and tier competencies were saved.', 'success');
+    addToast(t('profile.profileUpdatedTitle'), t('profile.profileUpdatedDesc'), 'success');
   };
 
   return (
@@ -57,10 +57,10 @@ export const ProfilePage: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-          User Profile
+          {t('profile.title')}
         </h1>
         <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          Manage your personal identity, authorized tier badges, and performance telemetry.
+          {t('profile.subtitle')}
         </p>
       </div>
 
@@ -77,10 +77,10 @@ export const ProfilePage: React.FC = () => {
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{currentUser.name}</h2>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
-                Active Session
+                {t('common.status')}
               </span>
             </div>
-            <p className="text-xs text-zinc-500">{currentUser.role}</p>
+            <p className="text-xs text-zinc-500">{formatRole(currentUser.role)}</p>
             <div className="flex items-center gap-1.5 mt-2">
               {currentUser.supportLevels.map(lvl => (
                 <SupportBadge key={lvl} level={lvl} size="sm" />
@@ -95,19 +95,19 @@ export const ProfilePage: React.FC = () => {
             <span className="block text-xl font-bold text-zinc-900 dark:text-zinc-100">
               {activeIssues.length}
             </span>
-            <span className="text-[11px] text-zinc-400">Open Tickets</span>
+            <span className="text-[11px] text-zinc-400">{t('profile.openTickets')}</span>
           </div>
           <div className="text-center px-3 border-l border-zinc-200 dark:border-zinc-800">
             <span className="block text-xl font-bold text-emerald-600 dark:text-emerald-400">
               {resolvedIssues.length}
             </span>
-            <span className="text-[11px] text-zinc-400">Resolved</span>
+            <span className="text-[11px] text-zinc-400">{t('status.Resolved')}</span>
           </div>
           <div className="text-center px-3 border-l border-zinc-200 dark:border-zinc-800">
             <span className="block text-xl font-bold text-rose-600 dark:text-rose-400">
               {breachedAssigned}
             </span>
-            <span className="text-[11px] text-zinc-400">Breached</span>
+            <span className="text-[11px] text-zinc-400">{t('profile.breachedSLAs')}</span>
           </div>
         </div>
       </div>
@@ -115,13 +115,13 @@ export const ProfilePage: React.FC = () => {
       {/* Edit Form */}
       <form onSubmit={handleSave} className="p-6 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs space-y-4">
         <h3 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider pb-2 border-b border-zinc-100 dark:border-zinc-800">
-          Profile Details
+          {t('profile.personalInfo')}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
             <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Full Name *
+              {t('profile.fullName')} *
             </label>
             <input
               type="text"
@@ -134,7 +134,7 @@ export const ProfilePage: React.FC = () => {
 
           <div>
             <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Email Address *
+              {t('profile.emailAddress')} *
             </label>
             <input
               type="email"
@@ -147,7 +147,7 @@ export const ProfilePage: React.FC = () => {
 
           <div>
             <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Role / Title
+              {t('profile.role')}
             </label>
             <input
               type="text"
@@ -172,7 +172,7 @@ export const ProfilePage: React.FC = () => {
 
         <div>
           <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-            Assigned Support Tiers
+            {t('profile.authorizedTiers')}
           </label>
           <div className="flex items-center gap-2">
             {(['L1', 'L2', 'L3'] as SupportLevel[]).map(lvl => {
@@ -189,7 +189,7 @@ export const ProfilePage: React.FC = () => {
                   }`}
                 >
                   {isSelected && <Check size={12} />}
-                  <span>{lvl} Support Tier</span>
+                  <span>{lvl} {t('supportCenter.tier')}</span>
                 </button>
               );
             })}
@@ -202,7 +202,7 @@ export const ProfilePage: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition"
           >
             <Save size={14} />
-            <span>Update Profile</span>
+            <span>{t('profile.updateProfile')}</span>
           </button>
         </div>
       </form>

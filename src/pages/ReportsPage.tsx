@@ -36,7 +36,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 };
 
 export const ReportsPage: React.FC = () => {
-  const { issues, projects, users, addToast } = useApp();
+  const { issues, projects, users, addToast, t } = useApp();
 
   // Aggregate Metrics
   const stats = useMemo(() => {
@@ -150,14 +150,14 @@ export const ReportsPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Reports &amp; SLA Performance
+              {t('reports.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">
-              Real-time Analytics
+              {t('common.live')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Service level agreement adherence, escalation velocity, and team operational health.
+            {t('reports.subtitle')}
           </p>
         </div>
 
@@ -166,7 +166,7 @@ export const ReportsPage: React.FC = () => {
           className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs font-semibold shadow-xs transition"
         >
           <FileSpreadsheet size={15} />
-          <span>Export CSV Report</span>
+          <span>{t('reports.exportCsvBtn')}</span>
         </button>
       </div>
 
@@ -175,50 +175,50 @@ export const ReportsPage: React.FC = () => {
         {/* Compliance Rate */}
         <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>SLA Compliance Rate</span>
+            <span>{t('reports.slaComplianceRate')}</span>
             <Award size={16} className="text-emerald-500" />
           </div>
           <div className="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.complianceRate}%
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1">Target benchmark &ge; 90%</p>
+          <p className="text-[11px] text-zinc-400 mt-1">{t('reports.targetBenchmark')}</p>
         </div>
 
         {/* Avg First Response */}
         <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>Avg. First Response Time</span>
+            <span>{t('reports.avgFirstResponseTime')}</span>
             <Clock size={16} className="text-blue-500" />
           </div>
           <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             28 mins
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1">Faster than SLA threshold (1h)</p>
+          <p className="text-[11px] text-zinc-400 mt-1">{t('reports.fasterThanThreshold')}</p>
         </div>
 
         {/* Avg Resolution */}
         <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>Avg. Resolution Time</span>
+            <span>{t('reports.avgResolutionHours')}</span>
             <CheckCircle2 size={16} className="text-indigo-500" />
           </div>
           <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             4.2 hrs
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1">Measured across all closed tickets</p>
+          <p className="text-[11px] text-zinc-400 mt-1">{t('reports.measuredAcrossClosed')}</p>
         </div>
 
         {/* Breached Count */}
         <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between text-xs text-zinc-500">
-            <span>Breached Tickets</span>
+            <span>{t('reports.breachedCount')}</span>
             <AlertTriangle size={16} className="text-rose-500" />
           </div>
           <div className="mt-2 text-2xl font-bold text-rose-600 dark:text-rose-400">
             {stats.breached}
           </div>
           <p className="text-[11px] text-zinc-400 mt-1">
-            {stats.atRisk} currently at risk of breach
+            {t('reports.atRiskOfBreach', { count: stats.atRisk })}
           </p>
         </div>
       </div>
@@ -228,9 +228,9 @@ export const ReportsPage: React.FC = () => {
         {/* Support Escalation Breakdown */}
         <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-            Active Tickets by Support Tier
+            {t('reports.activeTicketsByTier')}
           </h2>
-          <p className="text-xs text-zinc-500 mb-4">Volume distribution across L1 frontline, L2 technical, and L3 engineering.</p>
+          <p className="text-xs text-zinc-500 mb-4">{t('reports.volumeDesc')}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={tierData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -258,9 +258,9 @@ export const ReportsPage: React.FC = () => {
         {/* Priority Breakdown (Pie) */}
         <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-            Tickets by Priority Severity
+            {t('reports.ticketsByPriority')}
           </h2>
-          <p className="text-xs text-zinc-500 mb-4">Ratio of critical P0/P1 incidents against standard tasks.</p>
+          <p className="text-xs text-zinc-500 mb-4">{t('reports.ratioDesc')}</p>
           <div className="h-64 flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -295,9 +295,9 @@ export const ReportsPage: React.FC = () => {
         {/* Status Distribution */}
         <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs lg:col-span-2">
           <h2 className="text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-            Workflow Status Distribution
+            {t('reports.workflowStatusDist')}
           </h2>
-          <p className="text-xs text-zinc-500 mb-4">Tracking operational bottlenecks across development and triage stages.</p>
+          <p className="text-xs text-zinc-500 mb-4">{t('reports.bottlenecksDesc')}</p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

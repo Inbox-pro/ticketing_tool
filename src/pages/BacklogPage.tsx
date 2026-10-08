@@ -32,7 +32,8 @@ export const BacklogPage: React.FC = () => {
     startSprint, 
     completeSprint, 
     deleteSprint, 
-    updateIssue 
+    updateIssue,
+    t
   } = useApp();
   const navigate = useNavigate();
 
@@ -98,14 +99,14 @@ export const BacklogPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Backlog &amp; Sprints
+              {t('backlog.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">
-              {projectSprints.length} Sprints
+              {projectSprints.length} {t('nav.sprints')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Plan team iterations, allocate story points, and prioritize user stories for active sprints.
+            {t('backlog.subtitle')}
           </p>
         </div>
 
@@ -128,7 +129,7 @@ export const BacklogPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
           >
             <Plus size={15} className="stroke-[2.5]" />
-            <span>Create Sprint</span>
+            <span>{t('backlog.createSprint')}</span>
           </button>
         </div>
       </div>
@@ -143,19 +144,19 @@ export const BacklogPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{activeSprint.name}</h2>
                   <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">
-                    Active Sprint
+                    {t('backlog.activeSprintBadge')}
                   </span>
                 </div>
                 {activeSprint.goal && (
                   <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1 font-medium italic">
-                    Goal: &ldquo;{activeSprint.goal}&rdquo;
+                    {t('backlog.sprintGoal')} &ldquo;{activeSprint.goal}&rdquo;
                   </p>
                 )}
                 <div className="flex items-center gap-3 text-[11px] text-zinc-400 mt-1.5">
                   <span>{new Date(activeSprint.startDate).toLocaleDateString()} – {new Date(activeSprint.endDate).toLocaleDateString()}</span>
                   <span>•</span>
                   <span>
-                    {issues.filter(i => i.sprintId === activeSprint.id).length} issues
+                    {t('backlog.issuesCount', { count: issues.filter(i => i.sprintId === activeSprint.id).length })}
                   </span>
                 </div>
               </div>
@@ -169,14 +170,14 @@ export const BacklogPage: React.FC = () => {
                   className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 transition flex items-center gap-1"
                 >
                   <Plus size={13} />
-                  <span>Add Issue</span>
+                  <span>{t('backlog.addIssue')}</span>
                 </button>
                 <button
                   onClick={() => setCompletingSprint(activeSprint)}
                   className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5"
                 >
                   <CheckCircle2 size={14} />
-                  <span>Complete Sprint</span>
+                  <span>{t('backlog.completeSprint')}</span>
                 </button>
               </div>
             </div>
@@ -227,9 +228,9 @@ export const BacklogPage: React.FC = () => {
                       <button
                         onClick={() => handleMoveIssueToSprint(issue.id, undefined)}
                         className="text-[11px] text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 px-1"
-                        title="Move to Backlog"
+                        title={t('backlog.moveToBacklog')}
                       >
-                        Backlog ↓
+                        {t('backlog.moveToBacklog')} ↓
                       </button>
                     </div>
                   </div>
@@ -240,8 +241,8 @@ export const BacklogPage: React.FC = () => {
         ) : (
           <div className="p-6 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 text-center bg-white dark:bg-zinc-900">
             <ListOrdered size={24} className="mx-auto text-zinc-400 mb-2" />
-            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">No Active Sprint</h3>
-            <p className="text-xs text-zinc-500 mt-1">Start one of the planned sprints below to initiate active tracking.</p>
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{t('backlog.noActiveSprint')}</h3>
+            <p className="text-xs text-zinc-500 mt-1">{t('backlog.noActiveSprintDesc')}</p>
           </div>
         )}
 
@@ -257,16 +258,16 @@ export const BacklogPage: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{sprint.name}</h3>
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                      Planned
+                      {t('backlog.plannedSprintBadge')}
                     </span>
                   </div>
                   {sprint.goal && (
-                    <p className="text-xs text-zinc-500 mt-1">Goal: {sprint.goal}</p>
+                    <p className="text-xs text-zinc-500 mt-1">{t('backlog.sprintGoal')} {sprint.goal}</p>
                   )}
                   <div className="flex items-center gap-3 text-[11px] text-zinc-400 mt-1">
                     <span>{sprint.startDate} to {sprint.endDate}</span>
                     <span>•</span>
-                    <span>{sprintIssues.length} issues ({totalPoints} story points)</span>
+                    <span>{t('backlog.issuesCount', { count: sprintIssues.length })} ({totalPoints} {t('backlog.pointsTotal')})</span>
                   </div>
                 </div>
 
@@ -278,14 +279,14 @@ export const BacklogPage: React.FC = () => {
                     }}
                     className="px-2.5 py-1 rounded border border-zinc-200 dark:border-zinc-700 text-xs font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
-                    + Add Issue
+                    + {t('backlog.addIssue')}
                   </button>
                   <button
                     onClick={() => startSprint(sprint.id)}
                     className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1 shadow-xs"
                   >
                     <Play size={12} />
-                    <span>Start Sprint</span>
+                    <span>{t('backlog.startSprint')}</span>
                   </button>
                   <button
                     onClick={() => setDeletingSprintId(sprint.id)}
@@ -301,7 +302,7 @@ export const BacklogPage: React.FC = () => {
               <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80 p-2">
                 {sprintIssues.length === 0 ? (
                   <p className="p-4 text-center text-xs text-zinc-400 italic">
-                    Sprint is empty. Drag or add issues from the Backlog below.
+                    {t('backlog.emptySprint')}
                   </p>
                 ) : (
                   sprintIssues.map(issue => (
@@ -326,7 +327,7 @@ export const BacklogPage: React.FC = () => {
                           onClick={() => handleMoveIssueToSprint(issue.id, undefined)}
                           className="text-[11px] text-zinc-400 hover:text-zinc-600 px-1"
                         >
-                          Backlog ↓
+                          {t('backlog.moveToBacklog')} ↓
                         </button>
                       </div>
                     </div>
@@ -342,10 +343,10 @@ export const BacklogPage: React.FC = () => {
           <div className="p-4 bg-zinc-50 dark:bg-zinc-950/50 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">
-                Backlog
+                {t('backlog.productBacklog')}
               </h3>
               <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold">
-                {backlogIssues.length} issues
+                {t('backlog.issuesCount', { count: backlogIssues.length })}
               </span>
             </div>
             <button
@@ -356,14 +357,14 @@ export const BacklogPage: React.FC = () => {
               className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1"
             >
               <Plus size={13} />
-              <span>Create Issue in Backlog</span>
+              <span>{t('backlog.createIssueInBacklog')}</span>
             </button>
           </div>
 
           <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80 p-2">
             {backlogIssues.length === 0 ? (
               <p className="p-6 text-center text-xs text-zinc-400 italic">
-                Backlog is clear. All issues are assigned to sprints.
+                {t('backlog.noBacklogIssues')}
               </p>
             ) : (
               backlogIssues.map(issue => (
@@ -392,7 +393,7 @@ export const BacklogPage: React.FC = () => {
                         defaultValue=""
                         className="text-[11px] rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-1.5 py-0.5 text-zinc-700 dark:text-zinc-300"
                       >
-                        <option value="" disabled>Move to sprint...</option>
+                        <option value="" disabled>{t('backlog.moveToSprint')}...</option>
                         {projectSprints.map(s => (
                           <option key={s.id} value={s.id}>{s.name}</option>
                         ))}
@@ -410,39 +411,39 @@ export const BacklogPage: React.FC = () => {
       {isCreateSprintOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 max-w-md w-full shadow-2xl">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Create Sprint</h3>
-            <p className="text-xs text-zinc-500 mt-1">Define cycle duration and target deliverables for this project.</p>
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{t('backlog.createSprint')}</h3>
+            <p className="text-xs text-zinc-500 mt-1">{t('backlog.defineSprintCycle')}</p>
             <form onSubmit={handleCreateSprint} className="mt-4 space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Sprint Name *
+                  {t('backlog.createSprint')} *
                 </label>
                 <input
                   type="text"
                   required
                   value={newSprintName}
                   onChange={e => setNewSprintName(e.target.value)}
-                  placeholder="e.g. Sprint 25 - Core Architecture"
+                  placeholder={t('backlog.sprintNamePlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Sprint Goal
+                  {t('backlog.sprintGoal')}
                 </label>
                 <textarea
                   rows={2}
                   value={newSprintGoal}
                   onChange={e => setNewSprintGoal(e.target.value)}
-                  placeholder="e.g. Modernize auth tokens and resolve L2 escalation backlog."
+                  placeholder={t('backlog.sprintGoalPlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Start Date</label>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">{t('backlog.startDate')}</label>
                   <input
                     type="date"
                     value={newSprintStartDate}
@@ -451,7 +452,7 @@ export const BacklogPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">End Date</label>
+                  <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">{t('backlog.endDate')}</label>
                   <input
                     type="date"
                     value={newSprintEndDate}
@@ -467,13 +468,13 @@ export const BacklogPage: React.FC = () => {
                   onClick={() => setIsCreateSprintOpen(false)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
-                  Create Sprint
+                  {t('backlog.createSprint')}
                 </button>
               </div>
             </form>
@@ -486,25 +487,25 @@ export const BacklogPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 max-w-md w-full shadow-2xl">
             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-              Complete {completingSprint.name}
+              {t('backlog.completeSprint')}: {completingSprint.name}
             </h3>
             <p className="text-xs text-zinc-500 mt-1">
-              Select where incomplete tickets should be routed.
+              {t('backlog.selectTargetSprint')}
             </p>
 
             <div className="mt-4 space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Move Incomplete Issues To:
+                  {t('backlog.moveIncompleteTo')}
                 </label>
                 <select
                   value={targetSprintForIncomplete}
                   onChange={e => setTargetSprintForIncomplete(e.target.value)}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 >
-                  <option value="">Product Backlog</option>
+                  <option value="">{t('backlog.productBacklog')}</option>
                   {plannedSprints.map(s => (
-                    <option key={s.id} value={s.id}>{s.name} (Planned)</option>
+                    <option key={s.id} value={s.id}>{s.name} ({t('backlog.plannedSprintBadge')})</option>
                   ))}
                 </select>
               </div>
@@ -515,14 +516,14 @@ export const BacklogPage: React.FC = () => {
                   onClick={() => setCompletingSprint(null)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="button"
                   onClick={handleFinishCompleteSprint}
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-md"
                 >
-                  Complete Sprint
+                  {t('backlog.completeSprint')}
                 </button>
               </div>
             </div>
@@ -540,9 +541,9 @@ export const BacklogPage: React.FC = () => {
 
       <ConfirmModal
         isOpen={!!deletingSprintId}
-        title="Delete Sprint"
-        message="Are you sure you want to delete this sprint? Contained issues will automatically return to the backlog."
-        confirmLabel="Delete Sprint"
+        title={t('backlog.deleteSprintTitle')}
+        message={t('backlog.deleteSprintMessage')}
+        confirmLabel={t('backlog.deleteSprintTitle')}
         onConfirm={() => {
           if (deletingSprintId) deleteSprint(deletingSprintId);
           setDeletingSprintId(null);

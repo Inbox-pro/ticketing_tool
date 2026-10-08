@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { IssueType, Priority, SupportLevel, IssueStatus } from '../../types';
-import { X, Plus, Sparkles } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -17,7 +17,20 @@ export const CreateIssueModal: React.FC<Props> = ({
   defaultProjectId,
   defaultSprintId,
 }) => {
-  const { projects, users, sprints, epics, currentUser, createIssue } = useApp();
+  const { 
+    projects, 
+    users, 
+    sprints, 
+    epics, 
+    currentUser, 
+    createIssue, 
+    t, 
+    formatType, 
+    formatPriority, 
+    formatSupportLevel, 
+    formatStatus, 
+    formatRole 
+  } = useApp();
   const navigate = useNavigate();
 
   const [projectId, setProjectId] = useState(defaultProjectId || projects[0]?.id || 'proj-1');
@@ -92,10 +105,10 @@ export const CreateIssueModal: React.FC<Props> = ({
               </div>
               <div>
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Create New Issue
+                  {t('modals.createIssueTitle')}
                 </h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                  Log a bug, feature task, or support ticket with SLA and support routing
+                  {t('modals.createIssueDesc')}
                 </p>
               </div>
             </div>
@@ -103,6 +116,7 @@ export const CreateIssueModal: React.FC<Props> = ({
               type="button"
               onClick={onClose}
               className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded-md transition"
+              aria-label={t('common.close')}
             >
               <X size={18} />
             </button>
@@ -113,7 +127,7 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Project <span className="text-rose-500">*</span>
+                  {t('modals.projectLabel')}
                 </label>
                 <select
                   value={projectId}
@@ -122,7 +136,7 @@ export const CreateIssueModal: React.FC<Props> = ({
                     setSprintId('');
                     setEpicId('');
                   }}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                   required
                 >
                   {projects.map(p => (
@@ -135,19 +149,19 @@ export const CreateIssueModal: React.FC<Props> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Issue Type <span className="text-rose-500">*</span>
+                  {t('modals.typeLabel')}
                 </label>
                 <select
                   value={type}
                   onChange={e => setType(e.target.value as IssueType)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                   required
                 >
-                  <option value="Task">Task (Work item)</option>
-                  <option value="Bug">Bug (Defect)</option>
-                  <option value="Story">Story (Feature)</option>
-                  <option value="Epic">Epic (Initiative)</option>
-                  <option value="Sub-task">Sub-task (Detailed unit)</option>
+                  <option value="Task">{formatType('Task')}</option>
+                  <option value="Bug">{formatType('Bug')}</option>
+                  <option value="Story">{formatType('Story')}</option>
+                  <option value="Epic">{formatType('Epic')}</option>
+                  <option value="Sub-task">{formatType('Sub-task')}</option>
                 </select>
               </div>
             </div>
@@ -155,15 +169,15 @@ export const CreateIssueModal: React.FC<Props> = ({
             {/* Summary */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                Summary / Title <span className="text-rose-500">*</span>
+                {t('modals.issueTitleLabel')}
               </label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                placeholder="e.g. Payment API returns 500 when completing checkout"
-                className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-none"
+                placeholder={t('modals.issueTitlePlaceholder')}
+                className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-hidden"
               />
             </div>
 
@@ -171,35 +185,35 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Support Level <span className="text-rose-500">*</span>
+                  {t('modals.supportTierLabel')} <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={supportLevel}
                   onChange={e => setSupportLevel(e.target.value as SupportLevel)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                   required
                 >
-                  <option value="L1">L1 - First Level Support</option>
-                  <option value="L2">L2 - Technical Support</option>
-                  <option value="L3">L3 - Expert / Engineering Support</option>
+                  <option value="L1">{t('support.l1Full')}</option>
+                  <option value="L2">{t('support.l2Full')}</option>
+                  <option value="L3">{t('support.l3Full')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Priority <span className="text-rose-500">*</span>
+                  {t('modals.priorityLabel')}
                 </label>
                 <select
                   value={priority}
                   onChange={e => setPriority(e.target.value as Priority)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                   required
                 >
-                  <option value="Highest">Highest (P0 - Blocker)</option>
-                  <option value="High">High (P1 - Urgent)</option>
-                  <option value="Medium">Medium (P2 - Normal)</option>
-                  <option value="Low">Low (P3 - Minor)</option>
-                  <option value="Lowest">Lowest (P4 - Trivial)</option>
+                  <option value="Highest">{formatPriority('Highest')}</option>
+                  <option value="High">{formatPriority('High')}</option>
+                  <option value="Medium">{formatPriority('Medium')}</option>
+                  <option value="Low">{formatPriority('Low')}</option>
+                  <option value="Lowest">{formatPriority('Lowest')}</option>
                 </select>
               </div>
             </div>
@@ -207,14 +221,14 @@ export const CreateIssueModal: React.FC<Props> = ({
             {/* Description */}
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                Description
+                {t('modals.issueDescLabel')}
               </label>
               <textarea
                 rows={4}
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                placeholder="Describe customer impact, steps to reproduce, technical logs or expected behavior..."
-                className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-none"
+                placeholder={t('modals.issueDescPlaceholder')}
+                className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:outline-hidden"
               />
             </div>
 
@@ -222,17 +236,17 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Assignee
+                  {t('modals.assigneeLabel')}
                 </label>
                 <select
                   value={assigneeId}
                   onChange={e => setAssigneeId(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">{t('common.unassigned')}</option>
                   {users.map(u => (
                     <option key={u.id} value={u.id}>
-                      {u.name} — {u.role} ({u.supportLevels.join('/')})
+                      {u.name} — {formatRole(u.role)} ({u.supportLevels.join('/')})
                     </option>
                   ))}
                 </select>
@@ -240,12 +254,12 @@ export const CreateIssueModal: React.FC<Props> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Reporter
+                  {t('common.reporter')}
                 </label>
                 <select
                   value={reporterId}
                   onChange={e => setReporterId(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 >
                   {users.map(u => (
                     <option key={u.id} value={u.id}>
@@ -260,14 +274,14 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Sprint
+                  {t('common.sprint')}
                 </label>
                 <select
                   value={sprintId}
                   onChange={e => setSprintId(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 >
-                  <option value="">Backlog (No Sprint)</option>
+                  <option value="">{t('backlog.title')} ({t('common.none')})</option>
                   {projectSprints.map(s => (
                     <option key={s.id} value={s.id}>
                       {s.name} ({s.status})
@@ -278,14 +292,14 @@ export const CreateIssueModal: React.FC<Props> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Epic
+                  {t('common.epic')}
                 </label>
                 <select
                   value={epicId}
                   onChange={e => setEpicId(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 >
-                  <option value="">None</option>
+                  <option value="">{t('common.none')}</option>
                   {projectEpics.map(e => (
                     <option key={e.id} value={e.id}>
                       {e.name}
@@ -299,20 +313,20 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Labels (comma separated)
+                  {t('modals.labelsLabel')}
                 </label>
                 <input
                   type="text"
                   value={labelsText}
                   onChange={e => setLabelsText(e.target.value)}
-                  placeholder="payment, api, critical"
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  placeholder={t('modals.labelsPlaceholder')}
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Story Points
+                  {t('modals.storyPointsLabel')}
                 </label>
                 <input
                   type="number"
@@ -320,20 +334,20 @@ export const CreateIssueModal: React.FC<Props> = ({
                   max="100"
                   value={storyPoints}
                   onChange={e => setStoryPoints(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Est. Time
+                  {t('common.estimatedTime')}
                 </label>
                 <input
                   type="text"
                   value={estimatedTime}
                   onChange={e => setEstimatedTime(e.target.value)}
-                  placeholder="e.g. 4h"
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  placeholder={t('common.estimatePlaceholder')}
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 />
               </div>
             </div>
@@ -342,31 +356,31 @@ export const CreateIssueModal: React.FC<Props> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Due Date
+                  {t('modals.dueDateLabel')}
                 </label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={e => setDueDate(e.target.value)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">
-                  Initial Status
+                  {t('common.status')}
                 </label>
                 <select
                   value={status}
                   onChange={e => setStatus(e.target.value as IssueStatus)}
-                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:border-blue-500 focus:outline-hidden"
                 >
-                  <option value="Open">Open</option>
-                  <option value="To Do">To Do</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="In Review">In Review</option>
-                  <option value="Testing">Testing</option>
-                  <option value="Blocked">Blocked</option>
+                  <option value="Open">{formatStatus('Open')}</option>
+                  <option value="To Do">{formatStatus('To Do')}</option>
+                  <option value="In Progress">{formatStatus('In Progress')}</option>
+                  <option value="In Review">{formatStatus('In Review')}</option>
+                  <option value="Testing">{formatStatus('Testing')}</option>
+                  <option value="Blocked">{formatStatus('Blocked')}</option>
                 </select>
               </div>
             </div>
@@ -379,7 +393,7 @@ export const CreateIssueModal: React.FC<Props> = ({
               onClick={onClose}
               className="px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-md transition"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -387,7 +401,7 @@ export const CreateIssueModal: React.FC<Props> = ({
               className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition shadow-xs disabled:opacity-50"
             >
               <Plus size={14} />
-              <span>Create Issue</span>
+              <span>{t('modals.submitCreate')}</span>
             </button>
           </div>
         </form>

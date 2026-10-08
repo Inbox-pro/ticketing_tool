@@ -59,7 +59,9 @@ export const AdminPanelPage: React.FC = () => {
     projects, 
     sprints, 
     activity, 
-    addToast 
+    addToast,
+    t,
+    formatRole
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'users' | 'permissions' | 'sla' | 'audit' | 'system'>('users');
@@ -423,7 +425,7 @@ export const AdminPanelPage: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
             >
               <Plus size={14} />
-              <span>Add Team Member</span>
+              <span>{t('admin.addTeamMember')}</span>
             </button>
           </div>
 
@@ -432,12 +434,12 @@ export const AdminPanelPage: React.FC = () => {
               <table className="w-full text-left text-xs">
                 <thead className="bg-zinc-50 dark:bg-zinc-800/60 text-zinc-500 dark:text-zinc-400 uppercase tracking-wider font-semibold border-b border-zinc-200 dark:border-zinc-800 text-[10px]">
                   <tr>
-                    <th className="py-3 px-4">User</th>
-                    <th className="py-3 px-4">Role &amp; Department</th>
-                    <th className="py-3 px-4">Support Tiers</th>
-                    <th className="py-3 px-4">Account Password</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-4">{t('admin.colUser')}</th>
+                    <th className="py-3 px-4">{t('admin.colRoleDept')}</th>
+                    <th className="py-3 px-4">{t('admin.colSupportTiers')}</th>
+                    <th className="py-3 px-4">{t('admin.colPassword')}</th>
+                    <th className="py-3 px-4">{t('admin.colStatus')}</th>
+                    <th className="py-3 px-4 text-right">{t('admin.colActions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
@@ -610,14 +612,14 @@ export const AdminPanelPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
                   <ShieldCheck className="text-blue-600" size={18} />
-                  <span>Role-Based Page Access Control (RBAC)</span>
+                  <span>{t('admin.rolePageAccessTitle')}</span>
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">
-                  Live Enforced
+                  {t('admin.liveEnforced')}
                 </span>
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-2xl">
-                Configure which GoldMine roles are permitted to access each application view. When a page is revoked for a role, users with that role will see the Access Denied guard and sidebar indicators will reflect restricted access.
+                {t('admin.rbacDescription')}
               </p>
             </div>
 
@@ -629,7 +631,7 @@ export const AdminPanelPage: React.FC = () => {
                 title="Restore default GoldMine permissions"
               >
                 <RefreshCw size={13} />
-                <span>Restore Defaults</span>
+                <span>{t('admin.restoreDefaults')}</span>
               </button>
               <button
                 type="button"
@@ -637,7 +639,7 @@ export const AdminPanelPage: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
               >
                 <Save size={14} />
-                <span>Save Permissions Matrix</span>
+                <span>{t('admin.savePermissionsMatrix')}</span>
               </button>
             </div>
           </div>
@@ -649,7 +651,7 @@ export const AdminPanelPage: React.FC = () => {
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
                 <input
                   type="text"
-                  placeholder="Search pages, routes, or categories..."
+                  placeholder={t('admin.searchPagesPlaceholder')}
                   value={searchPageTerm}
                   onChange={e => setSearchPageTerm(e.target.value)}
                   className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-hidden focus:ring-1 focus:ring-blue-500"
@@ -1298,37 +1300,37 @@ export const AdminPanelPage: React.FC = () => {
         <div className="space-y-6 animate-fadeIn">
           <div>
             <h2 className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
-              Database Snapshots &amp; Storage Maintenance
+              {t('admin.dbSnapshotsTitle')}
             </h2>
             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-              Offline JSON backup portability, schema migration, and factory reset controls.
+              {t('admin.dbSnapshotsDesc')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
-              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Tickets</span>
+              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t('admin.totalTickets')}</span>
               <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{totalIssues}</p>
             </div>
             <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
-              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Active Sprints</span>
+              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t('admin.activeSprints')}</span>
               <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{sprints.filter(s => s.status === 'active').length}</p>
             </div>
             <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
-              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Breached SLA</span>
+              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t('admin.breachedSla')}</span>
               <p className={`text-2xl font-bold mt-1 ${breachedIssues > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                 {breachedIssues}
               </p>
             </div>
             <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
-              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Team Accounts</span>
+              <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{t('admin.teamAccounts')}</span>
               <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">{users.length}</p>
             </div>
           </div>
 
           <div className="p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs space-y-4">
             <h3 className="text-xs font-bold text-zinc-800 dark:text-zinc-200 uppercase tracking-wider">
-              Backup Export &amp; Import
+              {t('admin.backupExportImport')}
             </h3>
             <div className="flex flex-wrap items-center gap-3">
               <button
@@ -1337,7 +1339,7 @@ export const AdminPanelPage: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
               >
                 <Download size={14} />
-                <span>Export JSON Database</span>
+                <span>{t('admin.exportJsonDb')}</span>
               </button>
 
               <button
@@ -1346,7 +1348,7 @@ export const AdminPanelPage: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 text-zinc-800 dark:text-zinc-200 text-xs font-semibold transition"
               >
                 <Upload size={14} />
-                <span>Import JSON Backup</span>
+                <span>{t('admin.importJsonBackup')}</span>
               </button>
               <input
                 ref={fileInputRef}
@@ -1362,7 +1364,7 @@ export const AdminPanelPage: React.FC = () => {
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-rose-200 dark:border-rose-900/60 bg-rose-50/50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100 text-xs font-semibold transition ml-auto"
               >
                 <RotateCcw size={14} />
-                <span>Reset to Seed Data</span>
+                <span>{t('admin.resetToSeedData')}</span>
               </button>
             </div>
           </div>
@@ -1398,7 +1400,7 @@ export const AdminPanelPage: React.FC = () => {
                   type="text"
                   value={userName}
                   onChange={e => setUserName(e.target.value)}
-                  placeholder="e.g. Anand Varma"
+                  placeholder={t('admin.userNamePlaceholder')}
                   className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   required
                 />
@@ -1412,7 +1414,7 @@ export const AdminPanelPage: React.FC = () => {
                   type="email"
                   value={userEmail}
                   onChange={e => setUserEmail(e.target.value)}
-                  placeholder="anand@inbox.GoldMine.io"
+                  placeholder={t('admin.userEmailPlaceholder')}
                   className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   required
                 />
@@ -1428,13 +1430,13 @@ export const AdminPanelPage: React.FC = () => {
                     onChange={e => setUserRole(e.target.value as UserRole)}
                     className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 p-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   >
-                    <option value="Admin">Admin</option>
-                    <option value="Support Agent">Support Agent</option>
-                    <option value="Technical">Technical</option>
-                    <option value="Engineer">Engineer</option>
-                    <option value="QA">QA</option>
-                    <option value="Project Manager">Project Manager</option>
-                    <option value="Viewer">Viewer</option>
+                    <option value="Admin">{formatRole('Admin')}</option>
+                    <option value="Support Agent">{formatRole('Support Agent')}</option>
+                    <option value="Technical">{formatRole('Technical')}</option>
+                    <option value="Engineer">{formatRole('Engineer')}</option>
+                    <option value="QA">{formatRole('QA')}</option>
+                    <option value="Project Manager">{formatRole('Project Manager')}</option>
+                    <option value="Viewer">{formatRole('Viewer')}</option>
                   </select>
                 </div>
 
@@ -1446,7 +1448,7 @@ export const AdminPanelPage: React.FC = () => {
                     type="text"
                     value={userDept}
                     onChange={e => setUserDept(e.target.value)}
-                    placeholder="Customer Support"
+                    placeholder={t('admin.deptPlaceholder')}
                     className="w-full rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   />
                 </div>
@@ -1460,7 +1462,7 @@ export const AdminPanelPage: React.FC = () => {
                   type="text"
                   value={userPassword}
                   onChange={e => setUserPassword(e.target.value)}
-                  placeholder="Set account password"
+                  placeholder={t('admin.passwordPlaceholder')}
                   className="w-full font-mono rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   required
                 />

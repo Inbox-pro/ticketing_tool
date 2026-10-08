@@ -25,7 +25,7 @@ import { SLABadge } from '../components/common/SLABadge';
 import { useApp } from '../context/AppContext';
 
 export const DocumentationPage: React.FC = () => {
-  const { settings, theme, toggleTheme } = useApp();
+  const { settings, theme, toggleTheme, t } = useApp();
   const [activeTab, setActiveTab] = useState<'overview' | 'sla' | 'lifecycle' | 'roles' | 'data' | 'faq'>('overview');
 
   // Interactive SLA Calculator demo state
@@ -51,12 +51,12 @@ export const DocumentationPage: React.FC = () => {
   const effectiveResolutionHours = Math.max(1, +(baseResolutionHours * priorityMultiplier).toFixed(1));
 
   const tabs = [
-    { id: 'overview', label: '1. What Inbox Does', icon: Sparkles },
-    { id: 'sla', label: '2. Support Escalation (L1/L2/L3)', icon: ShieldAlert },
-    { id: 'lifecycle', label: '3. Issue & Sprint Lifecycle', icon: KanbanSquare },
-    { id: 'roles', label: '4. Roles & Personas', icon: Users },
-    { id: 'data', label: '5. Configuration & Persistence', icon: Settings },
-    { id: 'faq', label: '6. Common Questions & FAQ', icon: HelpCircle },
+    { id: 'overview', label: t('docs.tabWhatInboxDoes'), icon: Sparkles },
+    { id: 'sla', label: t('docs.tabSupportEscalation'), icon: ShieldAlert },
+    { id: 'lifecycle', label: t('docs.tabIssueLifecycle'), icon: KanbanSquare },
+    { id: 'roles', label: t('docs.tabRolesPersonas'), icon: Users },
+    { id: 'data', label: t('docs.tabConfigPersistence'), icon: Settings },
+    { id: 'faq', label: t('docs.tabFaq'), icon: HelpCircle },
   ] as const;
 
   return (
@@ -67,7 +67,7 @@ export const DocumentationPage: React.FC = () => {
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/60 dark:border-blue-800 text-blue-700 dark:text-blue-400 text-xs font-semibold">
               <BookOpen size={13} />
-              <span>Official System Documentation &amp; Architecture Manual</span>
+              <span>{t('docs.officialManual')}</span>
             </div>
             
             <div className="pt-1">
@@ -75,36 +75,34 @@ export const DocumentationPage: React.FC = () => {
             </div>
 
             <p className="text-sm text-zinc-600 dark:text-zinc-300 max-w-2xl leading-relaxed">
-              <strong>Inbox</strong> is a unified GoldMine issue tracking, agile sprint management, and multi-tier 
-              (L1/L2/L3) support escalation engine. It bridges customer operations, technical support, and core engineering 
-              with automated SLA breach protection and live handoff audit trails.
+              {t('docs.bannerDesc')}
             </p>
           </div>
 
           {/* Quick Stats / Highlights */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">Support Tiers</p>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">{t('docs.supportTiersLabel')}</p>
               <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">L1, L2, L3</p>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">Active Escalation</span>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">{t('docs.activeEscalation')}</span>
             </div>
             <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60">
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">Appearance</p>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">{t('docs.appearanceLabel')}</p>
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-xs font-bold capitalize text-zinc-900 dark:text-zinc-100">{theme} Mode</span>
+                <span className="text-xs font-bold capitalize text-zinc-900 dark:text-zinc-100">{theme} {t('docs.mode')}</span>
                 <button
                   onClick={toggleTheme}
                   className="text-[10px] underline text-blue-600 dark:text-blue-400 font-medium"
                 >
-                  Toggle
+                  {t('docs.toggle')}
                 </button>
               </div>
-              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Class-based dark mode</span>
+              <span className="text-[10px] text-zinc-500 dark:text-zinc-400">{t('docs.classBasedDark')}</span>
             </div>
             <div className="p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 col-span-2 sm:col-span-1">
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">Storage Engine</p>
-              <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">Local State</p>
-              <span className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">Zero Setup Needed</span>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">{t('docs.storageEngine')}</p>
+              <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">{t('docs.localState')}</p>
+              <span className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">{t('docs.zeroSetupNeeded')}</span>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { IssueStatus } from '../../types';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   status: IssueStatus;
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export const StatusBadge: React.FC<Props> = ({ status, size = 'md' }) => {
+  const { formatStatus } = useApp();
   const getStyle = () => {
     switch (status) {
       case 'Open':
@@ -35,7 +37,7 @@ export const StatusBadge: React.FC<Props> = ({ status, size = 'md' }) => {
         size === 'sm' ? 'text-[10px] px-1.5 py-0.5' : 'text-xs px-2.5 py-0.5'
       }`}
     >
-      {status}
+      {formatStatus(status)}
     </span>
   );
 };

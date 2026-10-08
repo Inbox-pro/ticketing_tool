@@ -2,6 +2,7 @@ import React from 'react';
 import { Issue } from '../../types';
 import { calculateSLAInfo } from '../../services/storage';
 import { Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   issue: Issue;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const SLABadge: React.FC<Props> = ({ issue, size = 'md', showDetails = false }) => {
+  const { formatSLAStatus, t, language } = useApp();
   const sla = calculateSLAInfo(issue);
 
   const getStyle = () => {
@@ -37,8 +39,34 @@ export const SLABadge: React.FC<Props> = ({ issue, size = 'md', showDetails = fa
 
   const { icon: Icon, badge } = getStyle();
 
+  // Localized resolution text
+  const getLocalizedResolutionText = () => {
+    const isResolved = issue.status === 'Resolved' || issue.status === 'Closed';
+    const hUnit = language === 'de' ? 'Std.' : language === 'nl' ? 'u' : 'h';
+    const mUnit = 'm';
+
+    if (isResolved) {
+      return sla.isResolutionBreached
+        ? `${formatSLAStatus('Breached')}`
+        : `${formatSLAStatus('Within SLA')}`;
+    }
+    
+    if (sla.resolutionRemainingMs > 0) {
+      const hours = Math.floor(sla.resolutionRemainingMs / (3600 * 1000));
+      const mins = Math.floor((sla.resolutionRemainingMs % (3600 * 1000)) / (60 * 1000));
+      return `${hours}${hUnit} ${mins}${mUnit} ${t('sla.timeLeft')}`;
+    } else {
+      const exceededMs = Math.abs(sla.resolutionRemainingMs);
+      const hours = Math.floor(exceededMs / (3600 * 1000));
+      const mins = Math.floor((exceededMs % (3600 * 1000)) / (60 * 1000));
+      return `${hours}${hUnit} ${mins}${mUnit} ${t('sla.overdue')}`;
+    }
+  };
+
+  const localizedText = getLocalizedResolutionText();
+
   return (
-    <div className="inline-flex items-center gap-1.5" title={`SLA: ${sla.status} (${sla.resolutionText})`}>
+    <div className="inline-flex items-center gap-1.5" title={`SLA: ${formatSLAStatus(sla.status)} (${localizedText})`}>
       <span
         id={`sla-${issue.id}`}
         className={`inline-flex items-center gap-1 font-medium rounded border select-none ${badge} ${
@@ -46,11 +74,11 @@ export const SLABadge: React.FC<Props> = ({ issue, size = 'md', showDetails = fa
         }`}
       >
         <Icon size={size === 'sm' ? 11 : 13} className="shrink-0" />
-        <span>{sla.status}</span>
+        <span>{formatSLAStatus(sla.status)}</span>
       </span>
       {showDetails && (
         <span className={`text-[11px] font-mono ${sla.isResolutionBreached ? 'text-rose-600 dark:text-rose-400 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>
-          {sla.resolutionText}
+          {localizedText}
         </span>
       )}
     </div>

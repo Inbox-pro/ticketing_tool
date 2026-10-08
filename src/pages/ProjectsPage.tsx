@@ -17,7 +17,7 @@ import { Project } from '../types';
 import { ConfirmModal } from '../components/common/ConfirmModal';
 
 export const ProjectsPage: React.FC = () => {
-  const { projects, issues, users, createProject, updateProject, deleteProject } = useApp();
+  const { projects, issues, users, createProject, updateProject, deleteProject, t } = useApp();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,14 +86,14 @@ export const ProjectsPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Projects
+              {t('projects.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">
-              {projects.length} Total
+              {projects.length} {t('supportCenter.queueSummary')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Manage GoldMine repositories, service desks, and cross-functional teams.
+            {t('projects.subtitle')}
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export const ProjectsPage: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
         >
           <Plus size={15} className="stroke-[2.5]" />
-          <span>Create Project</span>
+          <span>{t('projects.createProjectBtn')}</span>
         </button>
       </div>
 
@@ -119,7 +119,7 @@ export const ProjectsPage: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Filter projects by name or key..."
+          placeholder={t('projects.searchPlaceholder')}
           className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none"
         />
       </div>
@@ -154,7 +154,7 @@ export const ProjectsPage: React.FC = () => {
                 </h3>
 
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
-                  {project.description || 'No description provided.'}
+                  {project.description || t('projects.noDescription')}
                 </p>
               </div>
 
@@ -172,11 +172,11 @@ export const ProjectsPage: React.FC = () => {
                         <span className="text-[11px] text-zinc-700 dark:text-zinc-300">{lead.name}</span>
                       </>
                     ) : (
-                      <span className="text-[11px] text-zinc-400 italic">No Lead</span>
+                      <span className="text-[11px] text-zinc-400 italic">{t('projects.noLead')}</span>
                     )}
                   </div>
                   <span className="text-[11px] font-mono text-zinc-500">
-                    {activeCount} active / {projectIssues.length} total
+                    {t('projects.activeAndTotal', { active: activeCount, total: projectIssues.length })}
                   </span>
                 </div>
 
@@ -187,7 +187,7 @@ export const ProjectsPage: React.FC = () => {
                       onClick={() => navigate(`/board?project=${project.id}`)}
                       className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                     >
-                      Board
+                      {t('nav.board')}
                     </button>
                     <span className="text-zinc-300 dark:text-zinc-700">•</span>
                     <button
@@ -280,17 +280,17 @@ export const ProjectsPage: React.FC = () => {
                     onChange={e => setCategory(e.target.value as any)}
                     className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                   >
-                    <option value="Software">Software</option>
-                    <option value="Service Desk">Service Desk</option>
-                    <option value="Infrastructure">Infrastructure</option>
-                    <option value="Operations">Operations</option>
+                    <option value="Software">{t('projects.categorySoftware')}</option>
+                    <option value="Service Desk">{t('projects.categoryServiceDesk')}</option>
+                    <option value="Infrastructure">{t('projects.categoryInfrastructure')}</option>
+                    <option value="Operations">{t('projects.categoryOperations')}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  Project Lead
+                  {t('projects.leadLabel')}
                 </label>
                 <select
                   value={leadId}
@@ -313,7 +313,7 @@ export const ProjectsPage: React.FC = () => {
                   rows={2}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  placeholder="Project purpose, SLA guidelines, or scope..."
+                  placeholder={t('projects.descPlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
@@ -324,13 +324,13 @@ export const ProjectsPage: React.FC = () => {
                   onClick={() => setIsCreateOpen(false)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
-                  {editingProject ? 'Save Changes' : 'Create Project'}
+                  {editingProject ? t('common.save') : t('projects.createProjectBtn')}
                 </button>
               </div>
             </form>

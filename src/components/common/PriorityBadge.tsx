@@ -1,6 +1,7 @@
 import React from 'react';
 import { Priority } from '../../types';
 import { ChevronsUp, ChevronUp, Equal, ChevronDown, ChevronsDown } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   priority: Priority;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const PriorityBadge: React.FC<Props> = ({ priority, size = 'md', showText = true }) => {
+  const { formatPriority, t } = useApp();
   const getConfig = () => {
     switch (priority) {
       case 'Highest':
@@ -47,10 +49,10 @@ export const PriorityBadge: React.FC<Props> = ({ priority, size = 'md', showText
       className={`inline-flex items-center gap-1 rounded border font-medium select-none ${color} ${
         size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-0.5'
       }`}
-      title={`Priority: ${priority}`}
+      title={`${t('common.priority')}: ${formatPriority(priority)}`}
     >
       <Icon size={size === 'sm' ? 12 : 14} className="shrink-0 stroke-[2.5]" />
-      {showText && <span>{priority}</span>}
+      {showText && <span>{formatPriority(priority)}</span>}
     </span>
   );
 };

@@ -15,7 +15,7 @@ import { User, SupportLevel } from '../types';
 import { SupportBadge } from '../components/common/SupportBadge';
 
 export const TeamPage: React.FC = () => {
-  const { users, issues, currentUser, setCurrentUser, addUser, updateUser, addToast } = useApp();
+  const { users, issues, currentUser, setCurrentUser, addUser, updateUser, addToast, t } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -89,14 +89,14 @@ export const TeamPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Team &amp; Personnel
+              {t('team.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold">
-              {users.length} Active Members
+              {t('team.membersCount', { count: users.length })}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Manage agent authorization, tier competencies, and simulate distinct user accounts.
+            {t('team.subtitle')}
           </p>
         </div>
 
@@ -112,7 +112,7 @@ export const TeamPage: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
         >
           <Plus size={15} className="stroke-[2.5]" />
-          <span>Add Member</span>
+          <span>{t('team.addMember')}</span>
         </button>
       </div>
 
@@ -123,7 +123,7 @@ export const TeamPage: React.FC = () => {
           type="text"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search members by name or role..."
+          placeholder={t('team.searchPlaceholder')}
           className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none"
         />
       </div>
@@ -206,12 +206,12 @@ export const TeamPage: React.FC = () => {
                     }}
                     className="px-2.5 py-1 rounded bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-600 hover:text-white text-zinc-700 dark:text-zinc-300 text-[11px] font-semibold transition"
                   >
-                    Switch to User
+                    {t('accessDenied.switchAccount')}
                   </button>
                 ) : (
                   <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
                     <UserCheck size={13} />
-                    <span>Active Session</span>
+                    <span>{t('team.activeSession')}</span>
                   </span>
                 )}
               </div>
@@ -225,7 +225,7 @@ export const TeamPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-5 max-w-md w-full shadow-2xl">
             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-              {editingUser ? 'Edit Member' : 'Add Team Member'}
+              {editingUser ? t('team.editMember') : t('team.addTeamMember')}
             </h3>
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
               <div>
@@ -237,7 +237,7 @@ export const TeamPage: React.FC = () => {
                   required
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  placeholder="e.g. Rachel Adams"
+                  placeholder={t('team.namePlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
@@ -251,7 +251,7 @@ export const TeamPage: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="rachel@acme.inc"
+                  placeholder={t('team.emailPlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
@@ -264,14 +264,14 @@ export const TeamPage: React.FC = () => {
                   type="text"
                   value={role}
                   onChange={e => setRole(e.target.value)}
-                  placeholder="e.g. L2 Senior Support Engineer"
+                  placeholder={t('team.titlePlaceholder')}
                   className="w-full text-xs rounded-md border border-zinc-200 dark:border-zinc-700 px-3 py-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-                  Assigned Support Tiers (Click to toggle)
+                  {t('team.assignedSupportTiers')}
                 </label>
                 <div className="flex items-center gap-2">
                   {(['L1', 'L2', 'L3'] as SupportLevel[]).map(lvl => {
@@ -301,13 +301,13 @@ export const TeamPage: React.FC = () => {
                   onClick={() => setIsAddOpen(false)}
                   className="px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 rounded-md"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                 >
-                  {editingUser ? 'Save Member' : 'Add Member'}
+                  {editingUser ? t('common.save') : t('team.addMember')}
                 </button>
               </div>
             </form>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { IssueType } from '../../types';
 import { Bug, CheckSquare, Bookmark, Zap, GitCommit } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 interface Props {
   type: IssueType;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const TypeBadge: React.FC<Props> = ({ type, showText = true, size = 'md' }) => {
+  const { formatType, t } = useApp();
   const getConfig = () => {
     switch (type) {
       case 'Bug':
@@ -33,10 +35,10 @@ export const TypeBadge: React.FC<Props> = ({ type, showText = true, size = 'md' 
       className={`inline-flex items-center gap-1.5 rounded font-medium select-none border ${color} ${
         size === 'sm' ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-0.5'
       }`}
-      title={`Type: ${type}`}
+      title={`${t('common.type')}: ${formatType(type)}`}
     >
       <Icon size={iconSize} className="shrink-0" />
-      {showText && <span>{type}</span>}
+      {showText && <span>{formatType(type)}</span>}
     </span>
   );
 };

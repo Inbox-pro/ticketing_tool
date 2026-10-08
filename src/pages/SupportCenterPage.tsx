@@ -27,7 +27,7 @@ import { EscalateModal } from '../components/issue/EscalateModal';
 import { CreateIssueModal } from '../components/issue/CreateIssueModal';
 
 export const SupportCenterPage: React.FC = () => {
-  const { issues, users, projects, currentUser } = useApp();
+  const { issues, users, projects, currentUser, t } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -88,14 +88,14 @@ export const SupportCenterPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Support Escalation Center
+              {t('supportCenter.title')}
             </h1>
             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-semibold">
-              L1 / L2 / L3 Multi-Tier
+              {t('supportCenter.tierSummary')}
             </span>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Dispatch, route, and resolve technical escalations with SLA countdown monitoring.
+            {t('supportCenter.subtitle')}
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export const SupportCenterPage: React.FC = () => {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
         >
           <Plus size={15} className="stroke-[2.5]" />
-          <span>Log Support Ticket</span>
+          <span>{t('supportCenter.logSupportTicket')}</span>
         </button>
       </div>
 
@@ -123,14 +123,14 @@ export const SupportCenterPage: React.FC = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">All Support Tickets</span>
+            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">{t('supportCenter.allSupportTickets')}</span>
             <ShieldAlert size={16} className="text-blue-500" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{issues.length}</span>
-            <span className="text-xs text-zinc-400">active items</span>
+            <span className="text-xs text-zinc-400">{t('supportCenter.activeItems')}</span>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Cross-tier unified queue</p>
+          <p className="text-[11px] text-zinc-500 mt-1">{t('supportCenter.crossTierUnified')}</p>
         </div>
 
         {/* L1 Queue Card */}
@@ -146,14 +146,14 @@ export const SupportCenterPage: React.FC = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-sky-700 dark:text-sky-300">L1 Frontline Queue</span>
+            <span className="text-xs font-semibold text-sky-700 dark:text-sky-300">{t('supportCenter.l1FrontlineQueue')}</span>
             <Shield size={16} className="text-sky-500" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-sky-900 dark:text-sky-100">{l1Tickets.length}</span>
-            <span className="text-xs text-sky-600 font-medium">tickets</span>
+            <span className="text-xs text-sky-600 font-medium">{t('supportCenter.tickets')}</span>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Triage &amp; basic troubleshooting</p>
+          <p className="text-[11px] text-zinc-500 mt-1">{t('supportCenter.triageBasic')}</p>
         </div>
 
         {/* L2 Queue Card */}
@@ -169,14 +169,14 @@ export const SupportCenterPage: React.FC = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">L2 Technical Queue</span>
+            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300">{t('supportCenter.l2TechnicalQueue')}</span>
             <Cpu size={16} className="text-amber-500" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-amber-900 dark:text-amber-100">{l2Tickets.length}</span>
-            <span className="text-xs text-amber-600 font-medium">investigating</span>
+            <span className="text-xs text-amber-600 font-medium">{t('supportCenter.investigating')}</span>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Configuration &amp; deep log audits</p>
+          <p className="text-[11px] text-zinc-500 mt-1">{t('supportCenter.configAudit')}</p>
         </div>
 
         {/* L3 Queue Card */}
@@ -192,14 +192,14 @@ export const SupportCenterPage: React.FC = () => {
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">L3 Engineering Queue</span>
+            <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">{t('supportCenter.l3EngineeringQueue')}</span>
             <Flame size={16} className="text-purple-500" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-purple-900 dark:text-purple-100">{l3Tickets.length}</span>
-            <span className="text-xs text-purple-600 font-medium">escalated</span>
+            <span className="text-xs text-purple-600 font-medium">{t('supportCenter.escalated')}</span>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Defects &amp; code modifications</p>
+          <p className="text-[11px] text-zinc-500 mt-1">{t('supportCenter.defectsCode')}</p>
         </div>
       </div>
 
@@ -214,7 +214,7 @@ export const SupportCenterPage: React.FC = () => {
                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200'
             }`}
           >
-            All Tickets ({issues.length})
+            {t('supportCenter.allTickets')} ({issues.length})
           </button>
           <button
             onClick={() => setActiveQueue('L1')}
@@ -225,7 +225,7 @@ export const SupportCenterPage: React.FC = () => {
             }`}
           >
             <Shield size={13} />
-            <span>L1 Queue ({l1Tickets.length})</span>
+            <span>{t('supportCenter.l1Queue')} ({l1Tickets.length})</span>
           </button>
           <button
             onClick={() => setActiveQueue('L2')}
@@ -236,7 +236,7 @@ export const SupportCenterPage: React.FC = () => {
             }`}
           >
             <Cpu size={13} />
-            <span>L2 Queue ({l2Tickets.length})</span>
+            <span>{t('supportCenter.l2Queue')} ({l2Tickets.length})</span>
           </button>
           <button
             onClick={() => setActiveQueue('L3')}
@@ -247,7 +247,7 @@ export const SupportCenterPage: React.FC = () => {
             }`}
           >
             <Flame size={13} />
-            <span>L3 Queue ({l3Tickets.length})</span>
+            <span>{t('supportCenter.l3Queue')} ({l3Tickets.length})</span>
           </button>
           <button
             onClick={() => setActiveQueue('escalated')}
@@ -258,7 +258,7 @@ export const SupportCenterPage: React.FC = () => {
             }`}
           >
             <ArrowUpRight size={13} />
-            <span>Escalated ({escalatedTickets.length})</span>
+            <span>{t('supportCenter.escalatedOnly')} ({escalatedTickets.length})</span>
           </button>
         </div>
 
@@ -270,7 +270,7 @@ export const SupportCenterPage: React.FC = () => {
               onChange={e => setOnlyBreachedOrRisk(e.target.checked)}
               className="rounded text-rose-600 focus:ring-rose-500"
             />
-            <span className="font-medium text-rose-600 dark:text-rose-400">At Risk or Breached Only</span>
+            <span className="font-medium text-rose-600 dark:text-rose-400">{t('supportCenter.atRiskOrBreachedOnly')}</span>
           </label>
 
           <div className="relative w-48 sm:w-56">
@@ -279,7 +279,7 @@ export const SupportCenterPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search queue..."
+              placeholder={t('supportCenter.searchQueuePlaceholder')}
               className="w-full pl-8 pr-2.5 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none"
             />
           </div>
@@ -292,21 +292,21 @@ export const SupportCenterPage: React.FC = () => {
           <table className="w-full text-left text-xs">
             <thead className="bg-zinc-50 dark:bg-zinc-950/60 border-b border-zinc-200 dark:border-zinc-800 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
               <tr>
-                <th className="py-3 px-4">Ticket</th>
-                <th className="py-3 px-4">Summary</th>
-                <th className="py-3 px-4">Tier</th>
-                <th className="py-3 px-4">Priority</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Assignee</th>
-                <th className="py-3 px-4">SLA Countdown</th>
-                <th className="py-3 px-4 text-right">Escalation Action</th>
+                <th className="py-3 px-4">{t('supportCenter.ticket')}</th>
+                <th className="py-3 px-4">{t('supportCenter.summary')}</th>
+                <th className="py-3 px-4">{t('supportCenter.tier')}</th>
+                <th className="py-3 px-4">{t('common.priority')}</th>
+                <th className="py-3 px-4">{t('common.status')}</th>
+                <th className="py-3 px-4">{t('common.assignee')}</th>
+                <th className="py-3 px-4">{t('supportCenter.slaCountdown')}</th>
+                <th className="py-3 px-4 text-right">{t('supportCenter.escalationAction')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
               {currentQueueIssues.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-zinc-400">
-                    No tickets in this queue matching current criteria.
+                    {t('supportCenter.noTicketsMatching')}
                   </td>
                 </tr>
               ) : (
@@ -342,7 +342,7 @@ export const SupportCenterPage: React.FC = () => {
                         </button>
                         {issue.escalationHistory && issue.escalationHistory.length > 0 && (
                           <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold block mt-0.5">
-                            Escalated {issue.escalationHistory.length}x (Last: {issue.escalationHistory[issue.escalationHistory.length - 1].fromLevel} → {issue.escalationHistory[issue.escalationHistory.length - 1].toLevel})
+                            {t('dashboard.escalatedCount')}: {issue.escalationHistory.length}x ({issue.escalationHistory[issue.escalationHistory.length - 1].fromLevel} → {issue.escalationHistory[issue.escalationHistory.length - 1].toLevel})
                           </span>
                         )}
                       </td>
@@ -375,7 +375,7 @@ export const SupportCenterPage: React.FC = () => {
                             <span className="text-zinc-800 dark:text-zinc-200">{assignee.name}</span>
                           </div>
                         ) : (
-                          <span className="text-zinc-400 italic">Unassigned</span>
+                          <span className="text-zinc-400 italic">{t('common.unassigned')}</span>
                         )}
                       </td>
 
@@ -393,16 +393,16 @@ export const SupportCenterPage: React.FC = () => {
                               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800 hover:bg-amber-200 transition"
                             >
                               <ArrowUpRight size={13} className="stroke-[2.5]" />
-                              <span>Escalate</span>
+                              <span>{t('issueDetail.escalateIssue')}</span>
                             </button>
                           ) : (
-                            <span className="text-[11px] text-zinc-400 font-mono">Max Tier (L3)</span>
+                            <span className="text-[11px] text-zinc-400 font-mono">{t('supportCenter.maxTierL3')}</span>
                           )}
                           <button
                             onClick={() => navigate(`/issues/${issue.id}`)}
                             className="px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded"
                           >
-                            Open
+                            {t('common.view')}
                           </button>
                         </div>
                       </td>

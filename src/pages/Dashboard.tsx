@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
-  AreaChart, Area
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { 
   Ticket, 
   CheckCircle2, 
-  Clock, 
   ShieldAlert, 
   ArrowUpRight, 
   Plus, 
@@ -29,7 +27,15 @@ import { EscalateModal } from '../components/issue/EscalateModal';
 import { Issue } from '../types';
 
 export const Dashboard: React.FC = () => {
-  const { issues, projects, users, activity, currentUser } = useApp();
+  const { 
+    issues, 
+    projects, 
+    users, 
+    activity, 
+    t, 
+    formatPriority, 
+    formatSLAStatus 
+  } = useApp();
   const navigate = useNavigate();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -53,37 +59,29 @@ export const Dashboard: React.FC = () => {
   const l2Count = issues.filter(i => i.supportLevel === 'L2').length;
   const l3Count = issues.filter(i => i.supportLevel === 'L3').length;
 
-  // Chart Data: Status Breakdown
-  const statusCounts: Record<string, number> = {};
-  issues.forEach(i => {
-    statusCounts[i.status] = (statusCounts[i.status] || 0) + 1;
-  });
-  const statusData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-  const STATUS_COLORS = ['#3b82f6', '#6366f1', '#f59e0b', '#06b6d4', '#10b981', '#64748b', '#f43f5e', '#8b5cf6'];
-
   // Chart Data: Priority Breakdown
   const priorityOrder = ['Highest', 'High', 'Medium', 'Low', 'Lowest'];
   const priorityData = priorityOrder.map(priority => ({
-    priority,
+    priority: formatPriority(priority),
     count: issues.filter(i => i.priority === priority).length,
   }));
 
   // Support Tier vs SLA Breakdown
   const tierSLAData = [
     {
-      tier: 'L1 Frontline',
+      tier: 'L1',
       Within: issues.filter(i => i.supportLevel === 'L1' && calculateSLAInfo(i).status === 'Within SLA').length,
       AtRisk: issues.filter(i => i.supportLevel === 'L1' && calculateSLAInfo(i).status === 'At Risk').length,
       Breached: issues.filter(i => i.supportLevel === 'L1' && calculateSLAInfo(i).status === 'Breached').length,
     },
     {
-      tier: 'L2 Technical',
+      tier: 'L2',
       Within: issues.filter(i => i.supportLevel === 'L2' && calculateSLAInfo(i).status === 'Within SLA').length,
       AtRisk: issues.filter(i => i.supportLevel === 'L2' && calculateSLAInfo(i).status === 'At Risk').length,
       Breached: issues.filter(i => i.supportLevel === 'L2' && calculateSLAInfo(i).status === 'Breached').length,
     },
     {
-      tier: 'L3 Engineering',
+      tier: 'L3',
       Within: issues.filter(i => i.supportLevel === 'L3' && calculateSLAInfo(i).status === 'Within SLA').length,
       AtRisk: issues.filter(i => i.supportLevel === 'L3' && calculateSLAInfo(i).status === 'At Risk').length,
       Breached: issues.filter(i => i.supportLevel === 'L3' && calculateSLAInfo(i).status === 'Breached').length,
@@ -106,10 +104,10 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-            Executive Operations Dashboard
+            {t('dashboard.title')}
           </h1>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Real-time project delivery, support queue velocity, and SLA compliance monitoring.
+            {t('dashboard.subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -118,14 +116,14 @@ export const Dashboard: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
           >
             <ShieldAlert size={14} className="text-amber-500" />
-            <span>Support Queues</span>
+            <span>{t('nav.support')}</span>
           </button>
           <button
             onClick={() => setIsCreateOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition"
           >
             <Plus size={15} className="stroke-[2.5]" />
-            <span>Create Issue</span>
+            <span>{t('nav.createIssue')}</span>
           </button>
         </div>
       </div>
@@ -135,25 +133,25 @@ export const Dashboard: React.FC = () => {
         {/* Open Tickets */}
         <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Tickets</span>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.openIssues')}</span>
             <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
               <Ticket size={16} />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{openIssues}</span>
-            <span className="text-xs text-zinc-400">/ {totalIssues} total</span>
+            <span className="text-xs text-zinc-400">/ {totalIssues} {t('common.all')}</span>
           </div>
           <div className="mt-2 flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-            <span className="font-semibold text-blue-600 dark:text-blue-400">{resolvedIssues} resolved</span>
-            <span>across {projects.length} projects</span>
+            <span className="font-semibold text-blue-600 dark:text-blue-400">{resolvedIssues} {t('status.Resolved')}</span>
+            <span>{t('dashboard.acrossProjects', { count: projects.length })}</span>
           </div>
         </div>
 
         {/* SLA Compliance */}
         <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">SLA Compliance</span>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.slaHealth')}</span>
             <div className={`p-2 rounded-lg ${
               slaComplianceRate >= 90 
                 ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'
@@ -164,36 +162,36 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{slaComplianceRate}%</span>
-            <span className="text-xs text-emerald-600 font-medium">{withinSLACount} within target</span>
+            <span className="text-xs text-emerald-600 font-medium">{withinSLACount} {formatSLAStatus('Within SLA')}</span>
           </div>
           <div className="mt-2 flex items-center gap-2 text-[11px]">
-            <span className="text-amber-600 font-medium">{atRiskCount} at risk</span>
+            <span className="text-amber-600 font-medium">{atRiskCount} {formatSLAStatus('At Risk')}</span>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
-            <span className="text-rose-600 font-medium">{breachedCount} breached</span>
+            <span className="text-rose-600 font-medium">{breachedCount} {formatSLAStatus('Breached')}</span>
           </div>
         </div>
 
         {/* Support Escalations */}
         <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Active Escalations</span>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.escalatedCount')}</span>
             <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400">
               <ArrowUpRight size={16} />
             </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{escalatedIssues}</span>
-            <span className="text-xs text-amber-600 font-medium">routed to L2/L3</span>
+            <span className="text-xs text-amber-600 font-medium">L2 / L3</span>
           </div>
           <div className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400">
-            Escalation workflow active
+            {t('nav.slaOnline')}
           </div>
         </div>
 
         {/* Support Tier Distribution */}
         <div className="p-4 sm:p-5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Support Tiers</span>
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">{t('dashboard.supportQueueHealth')}</span>
             <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
               <TrendingUp size={16} />
             </div>
@@ -206,7 +204,7 @@ export const Dashboard: React.FC = () => {
             <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 font-mono">L3:{l3Count}</span>
           </div>
           <div className="mt-2 text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
-            {users.length} active engineers &amp; agents
+            {users.length} {t('nav.team')}
           </div>
         </div>
       </div>
@@ -224,15 +222,15 @@ export const Dashboard: React.FC = () => {
                 <Shield size={16} />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-sky-900 dark:text-sky-200">L1 Frontline Support</h3>
-                <p className="text-[11px] text-sky-700/80 dark:text-sky-400/80">Basic triage &amp; initial troubleshooting</p>
+                <h3 className="text-xs font-bold text-sky-900 dark:text-sky-200">{t('support.l1Full')}</h3>
+                <p className="text-[11px] text-sky-700/80 dark:text-sky-400/80">{t('supportCenter.l1Desc')}</p>
               </div>
             </div>
             <ArrowRight size={14} className="text-sky-600 group-hover:translate-x-0.5 transition" />
           </div>
           <div className="mt-3 flex items-baseline justify-between text-xs font-mono">
-            <span className="text-zinc-600 dark:text-zinc-400">Total volume:</span>
-            <span className="font-bold text-sky-700 dark:text-sky-300">{l1Count} tickets</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{t('supportCenter.queueSummary')}:</span>
+            <span className="font-bold text-sky-700 dark:text-sky-300">{l1Count}</span>
           </div>
         </div>
 
@@ -247,15 +245,15 @@ export const Dashboard: React.FC = () => {
                 <Cpu size={16} />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-amber-900 dark:text-amber-200">L2 Technical Support</h3>
-                <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80">Log investigation &amp; configuration fixes</p>
+                <h3 className="text-xs font-bold text-amber-900 dark:text-amber-200">{t('support.l2Full')}</h3>
+                <p className="text-[11px] text-amber-700/80 dark:text-amber-400/80">{t('supportCenter.l2Desc')}</p>
               </div>
             </div>
             <ArrowRight size={14} className="text-amber-600 group-hover:translate-x-0.5 transition" />
           </div>
           <div className="mt-3 flex items-baseline justify-between text-xs font-mono">
-            <span className="text-zinc-600 dark:text-zinc-400">Technical queue:</span>
-            <span className="font-bold text-amber-700 dark:text-amber-300">{l2Count} tickets</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{t('supportCenter.queueSummary')}:</span>
+            <span className="font-bold text-amber-700 dark:text-amber-300">{l2Count}</span>
           </div>
         </div>
 
@@ -270,15 +268,15 @@ export const Dashboard: React.FC = () => {
                 <Flame size={16} />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-purple-900 dark:text-purple-200">L3 Engineering Support</h3>
-                <p className="text-[11px] text-purple-700/80 dark:text-purple-400/80">Codebase defects &amp; deep infrastructure</p>
+                <h3 className="text-xs font-bold text-purple-900 dark:text-purple-200">{t('support.l3Full')}</h3>
+                <p className="text-[11px] text-purple-700/80 dark:text-purple-400/80">{t('supportCenter.l3Desc')}</p>
               </div>
             </div>
             <ArrowRight size={14} className="text-purple-600 group-hover:translate-x-0.5 transition" />
           </div>
           <div className="mt-3 flex items-baseline justify-between text-xs font-mono">
-            <span className="text-zinc-600 dark:text-zinc-400">Engineering queue:</span>
-            <span className="font-bold text-purple-700 dark:text-purple-300">{l3Count} tickets</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{t('supportCenter.queueSummary')}:</span>
+            <span className="font-bold text-purple-700 dark:text-purple-300">{l3Count}</span>
           </div>
         </div>
       </div>
@@ -290,10 +288,10 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Support Tier SLA Health
+                {t('dashboard.supportQueueHealth')}
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Compliance distribution across L1, L2, and L3 queues
+                {t('reports.slaPerformanceByTier')}
               </p>
             </div>
           </div>
@@ -320,15 +318,15 @@ export const Dashboard: React.FC = () => {
           <div className="mt-3 flex items-center justify-center gap-4 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-              <span className="text-zinc-600 dark:text-zinc-400">Within SLA</span>
+              <span className="text-zinc-600 dark:text-zinc-400">{formatSLAStatus('Within SLA')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-              <span className="text-zinc-600 dark:text-zinc-400">At Risk</span>
+              <span className="text-zinc-600 dark:text-zinc-400">{formatSLAStatus('At Risk')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-              <span className="text-zinc-600 dark:text-zinc-400">Breached</span>
+              <span className="text-zinc-600 dark:text-zinc-400">{formatSLAStatus('Breached')}</span>
             </div>
           </div>
         </div>
@@ -338,10 +336,10 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Tickets by Priority
+                {t('dashboard.priorityDistribution')}
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                P0 (Blocker) through P4 distribution
+                P0 - P4
               </p>
             </div>
           </div>
@@ -364,7 +362,7 @@ export const Dashboard: React.FC = () => {
             </ResponsiveContainer>
           </div>
           <div className="mt-3 text-center text-xs text-zinc-500 dark:text-zinc-400">
-            Total active priorities mapped to strict hourly response SLA windows
+            {t('nav.slaOnline')}
           </div>
         </div>
       </div>
@@ -376,74 +374,78 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Urgent Priority &amp; SLA Attention
+                {t('dashboard.urgentActionItems')}
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Tickets requiring immediate response or escalation to avoid SLA breaches
+                {t('dashboard.immediateAction')}
               </p>
             </div>
             <button
               onClick={() => navigate('/issues')}
               className="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1"
             >
-              <span>View all issues</span>
+              <span>{t('dashboard.viewAllIssues')}</span>
               <ArrowRight size={13} />
             </button>
           </div>
 
           <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
-            {urgentTickets.map(issue => {
-              const assignee = users.find(u => u.id === issue.assigneeId);
-              return (
-                <div
-                  key={issue.id}
-                  className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-850/50 px-2 rounded-lg transition"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
+            {urgentTickets.length === 0 ? (
+              <p className="text-xs text-zinc-500 py-4">{t('dashboard.noUrgentIssues')}</p>
+            ) : (
+              urgentTickets.map(issue => {
+                const assignee = users.find(u => u.id === issue.assigneeId);
+                return (
+                  <div
+                    key={issue.id}
+                    className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-850/50 px-2 rounded-lg transition"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => navigate(`/issues/${issue.id}`)}
+                          className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          {issue.id}
+                        </button>
+                        <SupportBadge level={issue.supportLevel} size="sm" />
+                        <PriorityBadge priority={issue.priority} size="sm" />
+                        <StatusBadge status={issue.status} size="sm" />
+                      </div>
+                      <p
+                        onClick={() => navigate(`/issues/${issue.id}`)}
+                        className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mt-1.5 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 line-clamp-1"
+                      >
+                        {issue.title}
+                      </p>
+                      <div className="mt-1 flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
+                        <span>{t('common.assignee')}: {assignee?.name || t('common.unassigned')}</span>
+                        <span>•</span>
+                        <SLABadge issue={issue} size="sm" showDetails={true} />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      {issue.supportLevel !== 'L3' && (
+                        <button
+                          onClick={() => setSelectedIssueForEscalation(issue)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900 transition"
+                        >
+                          <ArrowUpRight size={12} />
+                          <span>{t('issueDetail.escalateIssue')}</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => navigate(`/issues/${issue.id}`)}
-                        className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                        className="px-2.5 py-1 rounded-md text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
                       >
-                        {issue.id}
+                        {t('common.view')}
                       </button>
-                      <SupportBadge level={issue.supportLevel} size="sm" />
-                      <PriorityBadge priority={issue.priority} size="sm" />
-                      <StatusBadge status={issue.status} size="sm" />
-                    </div>
-                    <p
-                      onClick={() => navigate(`/issues/${issue.id}`)}
-                      className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mt-1.5 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 line-clamp-1"
-                    >
-                      {issue.title}
-                    </p>
-                    <div className="mt-1 flex items-center gap-3 text-[11px] text-zinc-500 dark:text-zinc-400">
-                      <span>Assignee: {assignee?.name || 'Unassigned'}</span>
-                      <span>•</span>
-                      <SLABadge issue={issue} size="sm" showDetails={true} />
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                    {issue.supportLevel !== 'L3' && (
-                      <button
-                        onClick={() => setSelectedIssueForEscalation(issue)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900 transition"
-                      >
-                        <ArrowUpRight size={12} />
-                        <span>Escalate</span>
-                      </button>
-                    )}
-                    <button
-                      onClick={() => navigate(`/issues/${issue.id}`)}
-                      className="px-2.5 py-1 rounded-md text-[11px] font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
-                    >
-                      Open
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -453,10 +455,10 @@ export const Dashboard: React.FC = () => {
             <div className="flex items-center gap-2">
               <Activity size={16} className="text-zinc-500" />
               <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                Workspace Activity
+                {t('dashboard.recentActivity')}
               </h3>
             </div>
-            <span className="text-[10px] text-zinc-400 font-mono">Live Audit</span>
+            <span className="text-[10px] text-zinc-400 font-mono">{t('common.live')}</span>
           </div>
 
           <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
